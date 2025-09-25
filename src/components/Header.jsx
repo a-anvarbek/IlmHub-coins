@@ -18,7 +18,7 @@ export default function Header({ currentPage, onNavigate }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { key: "home", label: "IlHub", isLogo: true },
+    { key: "home", label: "IlmHub", isLogo: true },
     { key: "about", label: t("nav.about") },
     { key: "features", label: t("nav.features") },
     { key: "contact", label: t("nav.contact") },
@@ -41,7 +41,7 @@ export default function Header({ currentPage, onNavigate }) {
             <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">I</span>
             </div>
-            <span className="text-xl font-bold text-blue-500">IlHub</span>
+            <span className="text-xl font-bold text-blue-500">IlmHub</span>
           </div>
 
           {/* Desktop Navigation */}

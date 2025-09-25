@@ -126,7 +126,7 @@ export default function FeaturesPage() {
               {t("features.title")}
             </h1>
             <p className="text-xl text-purple-100 mb-8">
-              Discover the powerful features that make IlHub Coin the perfect
+              Discover the powerful features that make IlmHub Coin the perfect
               educational platform
             </p>
             <div className="flex flex-wrap justify-center gap-3">
@@ -293,7 +293,7 @@ export default function FeaturesPage() {
               Ready to Experience These Features?
             </h2>
             <p className="text-xl text-blue-100 mb-8">
-              Join IlHub today and discover how our innovative platform can
+              Join  today and discover how our innovative platform can
               transform your learning experience.
             </p>
             <div className="grid md:grid-cols-3 gap-6 text-center">

@@ -74,8 +74,8 @@ export default function LoginPage({ onNavigate }) {
   };
 
   const demoCredentials = {
-    admin: { email: "admin@ilhub.uz", password: "admin123" },
-    teacher: { email: "ozoda@ilhub.uz", password: "teacher123" },
+    admin: { email: "admin@ilmhub.uz", password: "admin123" },
+    teacher: { email: "ozoda@ilmhub.uz", password: "teacher123" },
     student: { studentId: "1234567890", password: "student123" },
   };
 
@@ -104,7 +104,7 @@ export default function LoginPage({ onNavigate }) {
               <LogIn className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold mb-2">{t("auth.login")}</h1>
-            <p className="text-muted-foreground">Welcome back to IlHub Coin</p>
+            <p className="text-muted-foreground">Welcome back to IlmHub Coin</p>
           </div>
 
           <Card>

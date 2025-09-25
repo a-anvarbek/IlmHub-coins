@@ -114,7 +114,7 @@ export default function SignupPage({ onNavigate }) {
               <UserPlus className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold mb-2">{t("auth.signup")}</h1>
-            <p className="text-muted-foreground">Join IlHub Coin community</p>
+            <p className="text-muted-foreground">Join IlmHub Coin community</p>
           </div>
 
           <Card>

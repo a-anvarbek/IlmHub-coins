@@ -14,9 +14,9 @@ const translations = {
     "nav.logout": "Chiqish",
 
     // Home page
-    "home.title": "IlHub o'quv markazi",
+    "home.title": "IlmHub o'quv markazi",
     "home.subtitle":
-      "Ta'limga zamonaviy yondashuvlar. Ingliz tili, IT, Matematika va eng zamonaviy kurslarimiz bir maydonda o'rganish imkoniyati. Farzandingiz kelajagini birgalikda ilhubda quramiz!",
+      "Ta'limga zamonaviy yondashuvlar. Ingliz tili, IT, Matematika va eng zamonaviy kurslarimiz bir maydonda o'rganish imkoniyati. Farzandingiz kelajagini birgalikda ilmhubda quramiz!",
     "home.phone": "94 671 50 60",
     "home.contact_button": "Ma'lumot olish",
     "home.register_text": "Registratsiya uchun",
@@ -25,7 +25,7 @@ const translations = {
     // About page
     "about.title": "Biz haqimizda",
     "about.description":
-      "IlHub - zamonaviy ta'lim markazidir. Biz o'quvchilarga yuqori sifatli ta'lim berish va ularning kelajagini shakllantirishga yordam beramiz.",
+      "IlmHub - zamonaviy ta'lim markazidir. Biz o'quvchilarga yuqori sifatli ta'lim berish va ularning kelajagini shakllantirishga yordam beramiz.",
 
     // Features page
     "features.title": "Xususiyatlar",
@@ -90,9 +90,9 @@ const translations = {
     "nav.logout": "Logout",
 
     // Home page
-    "home.title": "IlHub Learning Center",
+    "home.title": "IlmHub Learning Center",
     "home.subtitle":
-      "Modern approaches to education. English, IT, Mathematics and our most modern courses in one place. Let's build your child's future together at IlHub!",
+      "Modern approaches to education. English, IT, Mathematics and our most modern courses in one place. Let's build your child's future together at IlmHub!",
     "home.phone": "94 671 50 60",
     "home.contact_button": "Get Information",
     "home.register_text": "For registration",
@@ -101,7 +101,7 @@ const translations = {
     // About page
     "about.title": "About Us",
     "about.description":
-      "IlHub is a modern educational center. We help students receive high-quality education and shape their future.",
+      "IlmHub is a modern educational center. We help students receive high-quality education and shape their future.",
 
     // Features page
     "features.title": "Features",

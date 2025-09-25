@@ -13,8 +13,8 @@ export function AuthProvider({ children }) {
   ]);
 
   const [teachers, setTeachers] = useState([
-    { id: "1", name: "Ozoda Rahimova", email: "ozoda@ilhub.uz" },
-    { id: "2", name: "Bobur Alimov", email: "bobur@ilhub.uz" },
+    { id: "1", name: "Ozoda Rahimova", email: "ozoda@ilmhub.uz" },
+    { id: "2", name: "Bobur Alimov", email: "bobur@ilmhub.uz" },
   ]);
 
   const [items, setItems] = useState([
@@ -46,13 +46,13 @@ export function AuthProvider({ children }) {
   const login = async (credentials) => {
     // Admin
     if (
-      credentials.email === "admin@ilhub.uz" &&
+      credentials.email === "admin@ilmhub.uz" &&
       credentials.password === "admin123"
     ) {
       setUser({
         id: "admin",
         name: "Admin",
-        email: "admin@ilhub.uz",
+        email: "admin@ilmhub.uz",
         role: "admin",
       });
       return true;
