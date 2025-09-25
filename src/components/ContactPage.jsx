@@ -70,7 +70,7 @@ export default function ContactPage() {
     {
       icon: <Mail className="w-6 h-6" />,
       title: t("contact.email"),
-      content: "info@ilhub.uz",
+      content: "info@ilmhub.uz",
       details: "We respond within 24 hours",
     },
     {
