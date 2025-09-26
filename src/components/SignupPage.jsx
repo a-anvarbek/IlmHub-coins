@@ -257,25 +257,7 @@ export default function SignupPage({ onNavigate }) {
                 </Button>
               </form>
 
-              <div className="mt-6">
-                <div className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">
-                  <h4 className="font-medium mb-2">Role Information:</h4>
-                  <ul className="space-y-1 text-xs">
-                    <li>
-                      <strong>Student:</strong> Access learning materials, earn
-                      coins, shop for rewards
-                    </li>
-                    <li>
-                      <strong>Teacher:</strong> Manage students, distribute
-                      coins, track progress
-                    </li>
-                    <li>
-                      <strong>Admin:</strong> Full system access, manage
-                      teachers and items
-                    </li>
-                  </ul>
-                </div>
-              </div>
+
 
               <div className="text-center mt-6">
                 <p className="text-sm text-muted-foreground">
