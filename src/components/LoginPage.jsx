@@ -1,8 +1,6 @@
 // Libraries
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-// Icons
 import {
   LogIn,
   User,
@@ -23,11 +21,10 @@ import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { Alert, AlertDescription } from "./ui/alert";
 
 // Redux
-import { loginAsync, selectAuth } from "../utils/redux/authSlice";
+import { loginAsync } from "../utils/redux/authSlice";
 
 export default function LoginPage({ onNavigate }) {
   const dispatch = useDispatch();
-  const authState = useSelector(selectAuth);
 
   const [showPassword, setShowPassword] = useState(false);
   const [loginType, setLoginType] = useState("student");
@@ -51,50 +48,35 @@ export default function LoginPage({ onNavigate }) {
     setError("");
     setLoading(true);
 
-    const credentials = {
-      identifier: loginType === "student" ? formData.studentId : formData.email,
-      password: formData.password,
-    };
-
     try {
-      const resultAction = await dispatch(loginAsync(credentials));
+      const credentials = {
+        identifier:
+          loginType === "student" ? formData.studentId : formData.email,
+        password: formData.password,
+      };
 
-      if (loginAsync.fulfilled.match(resultAction)) {
-        // Rolga qarab sahifani o‘zgartirish
-        const role = resultAction.payload.role; // backenddan role oladi
-        if (role === "student") onNavigate("student-panel");
-        else if (role === "teacher") onNavigate("teacher-panel");
-        else if (role === "admin") onNavigate("admin-panel");
-        else onNavigate("home");
+      const resultAction = await dispatch(loginAsync(credentials));
+      const result = resultAction.payload;
+
+      if (result) {
+        const backendRole = result.role;
+        if (backendRole !== undefined) {
+          if (backendRole === 0) onNavigate("admin-panel");
+          else if (backendRole === 1) onNavigate("teacher-panel");
+          else onNavigate("student-panel");
+        } else {
+          if (loginType === "student") onNavigate("student-panel");
+          else if (loginType === "teacher") onNavigate("teacher-panel");
+          else onNavigate("admin-panel");
+        }
       } else {
-        setError(resultAction.payload || "Login failed");
+        setError("Incorrect credentials");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
+      console.error("Login error:", err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const demoCredentials = {
-    admin: { email: "admin@ilhub.uz", password: "admin123" },
-    teacher: { email: "ozoda@ilhub.uz", password: "teacher123" },
-    student: { studentId: "1234567890", password: "student123" },
-  };
-
-  const fillDemoCredentials = () => {
-    if (loginType === "student") {
-      setFormData({
-        email: "",
-        studentId: demoCredentials.student.studentId,
-        password: demoCredentials.student.password,
-      });
-    } else {
-      setFormData({
-        email: demoCredentials[loginType].email,
-        studentId: "",
-        password: demoCredentials[loginType].password,
-      });
     }
   };
 
@@ -155,8 +137,9 @@ export default function LoginPage({ onNavigate }) {
                           value={formData.studentId}
                           onChange={handleChange}
                           required
-                          placeholder="Enter your 10-digit student ID"
+                          placeholder="Enter your Student ID"
                           className="pl-10"
+                          autoComplete="off"
                         />
                         <Key className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
                       </div>
@@ -174,6 +157,7 @@ export default function LoginPage({ onNavigate }) {
                           required
                           placeholder="Enter your email"
                           className="pl-10"
+                          autoComplete="off"
                         />
                         <Mail className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
                       </div>
@@ -191,6 +175,8 @@ export default function LoginPage({ onNavigate }) {
                         onChange={handleChange}
                         required
                         className="pl-10 pr-10"
+                        placeholder="Enter your password"
+                        autoComplete="new-password"
                       />
                       <Key className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
                       <button
@@ -216,28 +202,6 @@ export default function LoginPage({ onNavigate }) {
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Signing in..." : "Login"}
                   </Button>
-
-                  <div className="mt-4 p-3 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Demo credentials:
-                    </p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={fillDemoCredentials}
-                      className="w-full text-xs"
-                    >
-                      Use demo {loginType} credentials
-                    </Button>
-                    <div className="text-xs text-muted-foreground mt-2">
-                      {loginType === "student"
-                        ? `ID: ${demoCredentials.student.studentId}`
-                        : `Email: ${demoCredentials[loginType].email}`}
-                      <br />
-                      Password: {demoCredentials[loginType].password}
-                    </div>
-                  </div>
                 </form>
 
                 <div className="text-center mt-6">
