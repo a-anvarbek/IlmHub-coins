@@ -1,5 +1,6 @@
 // Libraries
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   LogIn,
   User,
@@ -19,52 +20,21 @@ import { Label } from "./ui/label";
 import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { Alert, AlertDescription } from "./ui/alert";
 
-// Contexts
-import { useLanguage } from "../contexts/LanguageContext";
-import { useAuth } from "../contexts/AuthContext";
+// Redux
+import { loginAsync } from "../utils/redux/authSlice";
 
 export default function LoginPage({ onNavigate }) {
-  const { t } = useLanguage();
-  const { login } = useAuth();
+  const dispatch = useDispatch();
+
   const [showPassword, setShowPassword] = useState(false);
   const [loginType, setLoginType] = useState("student");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     studentId: "",
     password: "",
   });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const credentials = {
-        password: formData.password,
-      };
-
-      if (loginType === "student") {
-        credentials.studentId = formData.studentId;
-      } else {
-        credentials.email = formData.email;
-      }
-
-      const success = await login(credentials);
-
-      if (success) {
-        onNavigate("home");
-      } else {
-        setError("Invalid credentials. Please try again.");
-      }
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -73,25 +43,40 @@ export default function LoginPage({ onNavigate }) {
     }));
   };
 
-  const demoCredentials = {
-    admin: { email: "admin@ilmhub.uz", password: "admin123" },
-    teacher: { email: "ozoda@ilmhub.uz", password: "teacher123" },
-    student: { studentId: "1234567890", password: "student123" },
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  const fillDemoCredentials = () => {
-    if (loginType === "student") {
-      setFormData({
-        email: "",
-        studentId: demoCredentials.student.studentId,
-        password: demoCredentials.student.password,
-      });
-    } else {
-      setFormData({
-        email: demoCredentials[loginType].email,
-        studentId: "",
-        password: demoCredentials[loginType].password,
-      });
+    try {
+      const credentials = {
+        identifier:
+          loginType === "student" ? formData.studentId : formData.email,
+        password: formData.password,
+      };
+
+      const resultAction = await dispatch(loginAsync(credentials));
+      const result = resultAction.payload;
+
+      if (result) {
+        const backendRole = result.role;
+        if (backendRole !== undefined) {
+          if (backendRole === 0) onNavigate("admin-panel");
+          else if (backendRole === 1) onNavigate("teacher-panel");
+          else onNavigate("student-panel");
+        } else {
+          if (loginType === "student") onNavigate("student-panel");
+          else if (loginType === "teacher") onNavigate("teacher-panel");
+          else onNavigate("admin-panel");
+        }
+      } else {
+        setError("Incorrect credentials");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,8 +88,8 @@ export default function LoginPage({ onNavigate }) {
             <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <LogIn className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold mb-2">{t("auth.login")}</h1>
-            <p className="text-muted-foreground">Welcome back to IlmHub Coin</p>
+            <h1 className="text-3xl font-bold mb-2">Login</h1>
+            <p className="text-muted-foreground">Welcome back to IlHub Coin</p>
           </div>
 
           <Card>
@@ -141,121 +126,96 @@ export default function LoginPage({ onNavigate }) {
                   </TabsTrigger>
                 </TabsList>
 
-                <div className="mt-6">
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    {loginType === "student" ? (
-                      <div>
-                        <Label htmlFor="studentId">
-                          {t("auth.student_id")}
-                        </Label>
-                        <div className="relative">
-                          <Input
-                            id="studentId"
-                            name="studentId"
-                            value={formData.studentId}
-                            onChange={handleChange}
-                            required
-                            placeholder="Enter your 10-digit student ID"
-                            className="pl-10"
-                          />
-                          <Key className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        <Label htmlFor="email">{t("auth.email")}</Label>
-                        <div className="relative">
-                          <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                            placeholder="Enter your email"
-                            className="pl-10"
-                          />
-                          <Mail className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
-                        </div>
-                      </div>
-                    )}
-
+                <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+                  {loginType === "student" ? (
                     <div>
-                      <Label htmlFor="password">{t("auth.password")}</Label>
+                      <Label htmlFor="studentId">Student ID</Label>
                       <div className="relative">
                         <Input
-                          id="password"
-                          name="password"
-                          type={showPassword ? "text" : "password"}
-                          value={formData.password}
+                          id="studentId"
+                          name="studentId"
+                          value={formData.studentId}
                           onChange={handleChange}
                           required
-                          placeholder="Enter your password"
-                          className="pl-10 pr-10"
+                          placeholder="Enter your Student ID"
+                          className="pl-10"
+                          autoComplete="off"
                         />
                         <Key className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
-                        >
-                          {showPassword ? (
-                            <EyeOff className="w-4 h-4" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </button>
                       </div>
                     </div>
+                  ) : (
+                    <div>
+                      <Label htmlFor="email">Email</Label>
+                      <div className="relative">
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                          placeholder="Enter your email"
+                          className="pl-10"
+                          autoComplete="off"
+                        />
+                        <Mail className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+                      </div>
+                    </div>
+                  )}
 
-                    {error && (
-                      <Alert variant="destructive">
-                        <AlertDescription>{error}</AlertDescription>
-                      </Alert>
-                    )}
-
-                    <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? "Signing in..." : t("auth.login")}
-                    </Button>
-                  </form>
-
-                  <div className="mt-4 p-3 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Demo credentials:
-                    </p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={fillDemoCredentials}
-                      className="w-full text-xs"
-                    >
-                      Use demo {loginType} credentials
-                    </Button>
-                    <div className="text-xs text-muted-foreground mt-2">
-                      {loginType === "student" ? (
-                        <>ID: {demoCredentials.student.studentId}</>
-                      ) : (
-                        <>Email: {demoCredentials[loginType].email}</>
-                      )}
-                      <br />
-                      Password: {demoCredentials[loginType].password}
+                  <div>
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        className="pl-10 pr-10"
+                        placeholder="Enter your password"
+                        autoComplete="new-password"
+                      />
+                      <Key className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
                     </div>
                   </div>
+
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Signing in..." : "Login"}
+                  </Button>
+                </form>
+
+                <div className="text-center mt-6">
+                  <p className="text-sm text-muted-foreground">
+                    Don't have an account?{" "}
+                    <button
+                      onClick={() => onNavigate("signup")}
+                      className="text-blue-600 hover:underline font-medium"
+                    >
+                      Sign up here
+                    </button>
+                  </p>
                 </div>
               </Tabs>
-
-              <div className="text-center mt-6">
-                <p className="text-sm text-muted-foreground">
-                  Don't have an account?{" "}
-                  <button
-                    onClick={() => onNavigate("signup")}
-                    className="text-blue-600 hover:underline font-medium"
-                  >
-                    Sign up here
-                  </button>
-                </p>
-              </div>
             </CardContent>
           </Card>
         </div>
