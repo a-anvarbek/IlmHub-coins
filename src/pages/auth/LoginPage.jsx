@@ -1,6 +1,7 @@
 // Libraries
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 import {
   LogIn,
   User,
@@ -28,8 +29,12 @@ import { Alert, AlertDescription } from "../../components/ui/alert";
 // Redux
 import { loginAsync } from "../../utils/redux/authSlice";
 
-export default function LoginPage({ onNavigate }) {
+// Routes
+import ROUTES from "../../router/routes";
+
+export default function LoginPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [loginType, setLoginType] = useState("student");
@@ -65,14 +70,15 @@ export default function LoginPage({ onNavigate }) {
 
       if (result) {
         const backendRole = result.role;
-        if (backendRole !== undefined) {
-          if (backendRole === 0) onNavigate("admin-panel");
-          else if (backendRole === 1) onNavigate("teacher-panel");
-          else onNavigate("student-panel");
-        } else {
-          if (loginType === "student") onNavigate("student-panel");
-          else if (loginType === "teacher") onNavigate("teacher-panel");
-          else onNavigate("admin-panel");
+
+        if (backendRole === 0) navigate(ROUTES.ADMIN);
+        else if (backendRole === 1) navigate(ROUTES.TEACHER);
+        else if (backendRole === 2) navigate(ROUTES.STUDENT);
+        else {
+          // fallback
+          if (loginType === "student") navigate(ROUTES.STUDENT);
+          else if (loginType === "teacher") navigate(ROUTES.TEACHER);
+          else navigate(ROUTES.ADMIN);
         }
       } else {
         setError("Incorrect credentials");
@@ -213,7 +219,7 @@ export default function LoginPage({ onNavigate }) {
                   <p className="text-sm text-muted-foreground">
                     Don't have an account?{" "}
                     <button
-                      onClick={() => onNavigate("signup")}
+                      onClick={() => navigate(ROUTES.SIGN_UP)}
                       className="text-blue-600 hover:underline font-medium"
                     >
                       Sign up here

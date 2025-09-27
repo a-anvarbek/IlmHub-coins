@@ -1,5 +1,7 @@
 // Libraries
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import {
   UserPlus,
   User,
@@ -11,83 +13,68 @@ import {
 } from "lucide-react";
 
 // Components
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
 import { Alert, AlertDescription } from "../../components/ui/alert";
+
+// Redux
+import { registerAsync, selectAuth } from "../../utils/redux/authSlice";
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
-import { useAuth } from "../../contexts/AuthContext";
 
-export default function SignupPage({ onNavigate }) {
+export default function SignupPage() {
   const { t } = useLanguage();
-  const { signup } = useAuth();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { status, error } = useSelector(selectAuth);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
     setSuccess("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      setLoading(false);
+      alert("❌ Passwords do not match");
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long");
-      setLoading(false);
+      alert("❌ Password must be at least 6 characters long");
       return;
     }
 
-    if (!formData.role) {
-      setError("Please select a role");
-      setLoading(false);
-      return;
-    }
+    const payload = {
+      fullName: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+    };
 
-    try {
-      const successResponse = await signup({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-      });
+    console.log("📤 Yuborilayotgan payload:", payload);
 
-      if (successResponse) {
-        setSuccess("Account created successfully! You can now login.");
-        setTimeout(() => {
-          onNavigate("login");
-        }, 2000);
-      } else {
-        setError("Failed to create account. Please try again.");
-      }
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
+    const resultAction = await dispatch(registerAsync(payload));
+
+    if (registerAsync.fulfilled.match(resultAction)) {
+      setSuccess("✅ Account created successfully!");
+      setTimeout(() => navigate("/student"), 1500);
+    } else {
+      console.error("❌ Registration failed:", resultAction.payload);
     }
   };
 
@@ -95,13 +82,6 @@ export default function SignupPage({ onNavigate }) {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleRoleChange = (value) => {
-    setFormData((prev) => ({
-      ...prev,
-      role: value,
     }));
   };
 
@@ -123,22 +103,25 @@ export default function SignupPage({ onNavigate }) {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Full Name */}
                 <div>
-                  <Label htmlFor="name">{t("auth.name")} *</Label>
+                  <Label htmlFor="fullName">{t("auth.name")} *</Label>
                   <div className="relative">
                     <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="fullName"
+                      name="fullName"
+                      value={formData.fullName}
                       onChange={handleChange}
                       required
                       placeholder="Enter your full name"
                       className="pl-10"
+                      autoComplete="name"
                     />
                     <User className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
                   </div>
                 </div>
 
+                {/* Email */}
                 <div>
                   <Label htmlFor="email">{t("auth.email")} *</Label>
                   <div className="relative">
@@ -151,33 +134,13 @@ export default function SignupPage({ onNavigate }) {
                       required
                       placeholder="Enter your email address"
                       className="pl-10"
+                      autoComplete="email"
                     />
                     <Mail className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="role">{t("auth.role")} *</Label>
-                  <Select
-                    value={formData.role}
-                    onValueChange={handleRoleChange}
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="student">
-                        {t("auth.student")}
-                      </SelectItem>
-                      <SelectItem value="teacher">
-                        {t("auth.teacher")}
-                      </SelectItem>
-                      <SelectItem value="admin">{t("auth.admin")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
+                {/* Password */}
                 <div>
                   <Label htmlFor="password">{t("auth.password")} *</Label>
                   <div className="relative">
@@ -190,6 +153,7 @@ export default function SignupPage({ onNavigate }) {
                       required
                       placeholder="Create a secure password"
                       className="pl-10 pr-10"
+                      autoComplete="new-password" // ✅ qo‘shildi
                     />
                     <Key className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
                     <button
@@ -204,11 +168,9 @@ export default function SignupPage({ onNavigate }) {
                       )}
                     </button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Password must be at least 6 characters long
-                  </p>
                 </div>
 
+                {/* Confirm Password */}
                 <div>
                   <Label htmlFor="confirmPassword">Confirm Password *</Label>
                   <div className="relative">
@@ -221,6 +183,7 @@ export default function SignupPage({ onNavigate }) {
                       required
                       placeholder="Confirm your password"
                       className="pl-10 pr-10"
+                      autoComplete="new-password" // ✅ qo‘shildi
                     />
                     <Key className="w-4 h-4 absolute left-3 top-3 text-muted-foreground" />
                     <button
@@ -239,12 +202,14 @@ export default function SignupPage({ onNavigate }) {
                   </div>
                 </div>
 
+                {/* Error */}
                 {error && (
                   <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
 
+                {/* Success */}
                 {success && (
                   <Alert className="border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900 dark:text-green-200">
                     <CheckCircle className="w-4 h-4" />
@@ -252,18 +217,46 @@ export default function SignupPage({ onNavigate }) {
                   </Alert>
                 )}
 
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Creating Account..." : t("auth.signup")}
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={status === "loading"}
+                >
+                  {status === "loading" ? (
+                    <span className="flex items-center justify-center">
+                      <svg
+                        className="animate-spin h-4 w-4 mr-2"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          fill="none"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        />
+                      </svg>
+                      Creating Account...
+                    </span>
+                  ) : (
+                    t("auth.signup")
+                  )}
                 </Button>
               </form>
-
-
 
               <div className="text-center mt-6">
                 <p className="text-sm text-muted-foreground">
                   Already have an account?{" "}
                   <button
-                    onClick={() => onNavigate("login")}
+                    onClick={() => navigate("/login")}
                     className="text-purple-600 hover:underline font-medium"
                   >
                     Login here
