@@ -1,15 +1,22 @@
+// Libraries
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App.jsx";
+import { BrowserRouter } from "react-router";
 
 // Redux
 import { Provider } from "react-redux";
-import { store } from "./utils/redux/store"; // path to your store
+import { store } from "./utils/redux/store";
 
-// Context Providers (agar ishlatayotgan bo‘lsangiz)
+// Component
+import App from "./App.jsx";
+
+// Context Providers
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext.jsx";
+
+// Style
+import "./index.css";
 
 // Root element
 const container = document.getElementById("root");
@@ -20,7 +27,11 @@ root.render(
     <Provider store={store}>
       <LanguageProvider>
         <AuthProvider>
-            <App />
+          <ThemeProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </ThemeProvider>
         </AuthProvider>
       </LanguageProvider>
     </Provider>
