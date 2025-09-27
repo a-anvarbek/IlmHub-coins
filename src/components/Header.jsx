@@ -11,6 +11,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 
+
 export default function Header({ currentPage, onNavigate }) {
   const { language, setLanguage, t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
@@ -29,6 +30,8 @@ export default function Header({ currentPage, onNavigate }) {
     onNavigate("home");
   };
 
+  console.log("Header user:", user);
+  
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 py-4">
