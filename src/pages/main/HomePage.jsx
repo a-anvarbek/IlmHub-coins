@@ -2,11 +2,11 @@
 import { Phone, Users, BookOpen, Award } from "lucide-react";
 
 // components
-import { Button } from "./ui/button";
-import { Card, CardContent } from "./ui/card";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent } from "../../components/ui/card";
 
 // Contexts
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 const features = [
   {

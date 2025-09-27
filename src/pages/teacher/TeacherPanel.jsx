@@ -11,8 +11,8 @@ import {
 import { toast } from "sonner";
 
 // Components
-import { Card, CardContent } from "./ui/card";
-import { Button } from "./ui/button";
+import { Card, CardContent } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
 import {
   Table,
   TableBody,
@@ -20,12 +20,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
-import { Badge } from "./ui/badge";
+} from "../../components/ui/table";
+import { Badge } from "../../components/ui/badge";
 
 // Contexts
-import { useLanguage } from "../contexts/LanguageContext";
-import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../../contexts/LanguageContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const tabs = [
   {

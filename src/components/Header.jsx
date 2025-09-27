@@ -1,5 +1,6 @@
 // Libraries
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { Moon, Sun, Globe, User, LogOut, Menu, X } from "lucide-react";
 
 // Components
@@ -11,27 +12,28 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 
+// Routes
+import ROUTES from "../router/routes";
 
-export default function Header({ currentPage, onNavigate }) {
+export default function Header() {
+  const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { key: "home", label: "IlmHub", isLogo: true },
-    { key: "about", label: t("nav.about") },
-    { key: "features", label: t("nav.features") },
-    { key: "contact", label: t("nav.contact") },
+    { key: ROUTES.HOME, label: "IlmHub", isLogo: true },
+    { key: ROUTES.ABOUT, label: t("nav.about") },
+    { key: ROUTES.FEATURES, label: t("nav.features") },
+    { key: ROUTES.CONTACT, label: t("nav.contact") },
   ];
 
   const handleLogout = () => {
     logout();
-    onNavigate("home");
+    navigate(ROUTES.HOME);
   };
 
-  console.log("Header user:", user);
-  
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 py-4">
@@ -39,7 +41,7 @@ export default function Header({ currentPage, onNavigate }) {
           {/* Logo */}
           <div
             className="flex items-center gap-2 cursor-pointer"
-            onClick={() => onNavigate("home")}
+            onClick={() => navigate(ROUTES.HOME)}
           >
             <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">I</span>
@@ -52,10 +54,8 @@ export default function Header({ currentPage, onNavigate }) {
             {navItems.slice(1).map((item) => (
               <button
                 key={item.key}
-                onClick={() => onNavigate(item.key)}
-                className={`hover:text-blue-500 transition-colors ${
-                  currentPage === item.key ? "text-blue-500" : "text-foreground"
-                }`}
+                onClick={() => navigate(item.key)}
+                className={`hover:text-blue-500 transition-colors`}
               >
                 {item.label}
               </button>
@@ -88,7 +88,7 @@ export default function Header({ currentPage, onNavigate }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => onNavigate(user.role + "-panel")}
+                  onClick={() => navigate(`/${user.role}`)}
                   className="hidden sm:flex"
                 >
                   <User className="w-4 h-4 mr-1" />
@@ -103,11 +103,11 @@ export default function Header({ currentPage, onNavigate }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => onNavigate("login")}
+                  onClick={() => navigate(ROUTES.LOGIN)}
                 >
                   {t("nav.login")}
                 </Button>
-                <Button size="sm" onClick={() => onNavigate("signup")}>
+                <Button size="sm" onClick={() => navigate(ROUTES.SIGN_UP)}>
                   {t("nav.signup")}
                 </Button>
               </div>
@@ -137,14 +137,10 @@ export default function Header({ currentPage, onNavigate }) {
                 <button
                   key={item.key}
                   onClick={() => {
-                    onNavigate(item.key);
+                    navigate(item.key);
                     setIsMenuOpen(false);
                   }}
-                  className={`text-left hover:text-blue-500 transition-colors ${
-                    currentPage === item.key
-                      ? "text-blue-500"
-                      : "text-foreground"
-                  }`}
+                  className="text-left hover:text-blue-500 transition-colors"
                 >
                   {item.label}
                 </button>
@@ -167,7 +163,7 @@ export default function Header({ currentPage, onNavigate }) {
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        onNavigate(user.role + "-panel");
+                        navigate(`/${user.role}`);
                         setIsMenuOpen(false);
                       }}
                       className="justify-start"
@@ -194,7 +190,7 @@ export default function Header({ currentPage, onNavigate }) {
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        onNavigate("login");
+                        navigate(ROUTES.LOGIN);
                         setIsMenuOpen(false);
                       }}
                       className="justify-start"
@@ -204,7 +200,7 @@ export default function Header({ currentPage, onNavigate }) {
                     <Button
                       size="sm"
                       onClick={() => {
-                        onNavigate("signup");
+                        navigate(ROUTES.SIGN_UP);
                         setIsMenuOpen(false);
                       }}
                       className="justify-start"

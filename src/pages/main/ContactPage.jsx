@@ -14,20 +14,18 @@ import {
 } from "lucide-react";
 
 // Components
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Textarea } from "../../components/ui/textarea";
 
 // Contexts
-import { useLanguage } from "../contexts/LanguageContext";
-
-const socialMedia = [
-  { icon: <Facebook className="w-5 h-5" />, name: "Facebook", url: "#" },
-  { icon: <Instagram className="w-5 h-5" />, name: "Instagram", url: "#" },
-  { icon: <Youtube className="w-5 h-5" />, name: "YouTube", url: "#" },
-  { icon: <Globe className="w-5 h-5" />, name: "Website", url: "#" },
-];
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function ContactPage() {
   const { t } = useLanguage();
@@ -79,6 +77,13 @@ export default function ContactPage() {
       content: "Mon - Sat: 8:00 AM - 8:00 PM",
       details: "Sunday: 9:00 AM - 6:00 PM",
     },
+  ];
+
+  const socialMedia = [
+    { icon: <Facebook className="w-5 h-5" />, name: "Facebook", url: "#" },
+    { icon: <Instagram className="w-5 h-5" />, name: "Instagram", url: "#" },
+    { icon: <Youtube className="w-5 h-5" />, name: "YouTube", url: "#" },
+    { icon: <Globe className="w-5 h-5" />, name: "Website", url: "#" },
   ];
 
   return (

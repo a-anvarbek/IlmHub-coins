@@ -11,22 +11,22 @@ import {
 } from "lucide-react";
 
 // Components
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { Alert, AlertDescription } from "./ui/alert";
+} from "../../components/ui/select";
+import { Alert, AlertDescription } from "../../components/ui/alert";
 
 // Contexts
-import { useLanguage } from "../contexts/LanguageContext";
-import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../../contexts/LanguageContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function SignupPage({ onNavigate }) {
   const { t } = useLanguage();
