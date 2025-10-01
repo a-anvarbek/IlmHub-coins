@@ -11,6 +11,7 @@ import HomePage from "../pages/main/HomePage";
 import AboutPage from "../pages/main/AboutPage";
 import FeaturesPage from "../pages/main/FeaturesPage";
 import ContactPage from "../pages/main/ContactPage";
+import Shop from "../pages/main/Shop";
 
 // Auth
 import SignupPage from "../pages/auth/SignupPage";
@@ -33,6 +34,7 @@ const MainRouter = () => {
       <Route path={ROUTES.ABOUT} element={<AboutPage />} />
       <Route path={ROUTES.FEATURES} element={<FeaturesPage />} />
       <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+      <Route path={ROUTES.SHOP} element={<Shop />} />
 
       {/* Auth */}
       <Route path={ROUTES.SIGN_UP} element={<SignupPage />} />

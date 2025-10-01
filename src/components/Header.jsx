@@ -12,6 +12,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 
+
 // Routes
 import ROUTES from "../router/routes";
 
@@ -27,6 +28,7 @@ export default function Header() {
     { key: ROUTES.ABOUT, label: t("nav.about") },
     { key: ROUTES.FEATURES, label: t("nav.features") },
     { key: ROUTES.CONTACT, label: t("nav.contact") },
+    { key: ROUTES.SHOP, label: t("nav.shop") },
   ];
 
   const handleLogout = () => {
