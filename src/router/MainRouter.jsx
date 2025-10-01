@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router";
 
 // Router
 import ROUTES from "./routes";
+import ProtectedRoute from "./ProtectedRoute";
 
 // ===== Imported pages =====
 
@@ -39,13 +40,34 @@ const MainRouter = () => {
       <Route path={ROUTES.LOGIN} element={<LoginPage />} />
 
       {/* Admin */}
-      <Route path={ROUTES.ADMIN} element={<AdminPanel />} />
+      <Route
+        path={ROUTES.ADMIN}
+        element={
+          <ProtectedRoute allowedRoles={[0]}>
+            <AdminPanel />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Teacher */}
-      <Route path={ROUTES.TEACHER} element={<TeacherPanel />} />
+      <Route
+        path={ROUTES.TEACHER}
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <TeacherPanel />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Student */}
-      <Route path={ROUTES.STUDENT} element={<StudentPanel />} />
+      <Route
+        path={ROUTES.STUDENT}
+        element={
+          <ProtectedRoute allowedRoles={[2]}>
+            <StudentPanel />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };

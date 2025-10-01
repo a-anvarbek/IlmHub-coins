@@ -37,11 +37,12 @@ import {
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
-import { useAuth } from "../../contexts/AuthContext";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../utils/redux/authSlice";
 
 export default function AdminPanel() {
   const { t } = useLanguage();
-  const { teachers, items, students, addTeacher, addItem } = useAuth();
+  const { teachers = [], items = [], students = [] } = useSelector(selectAuth);
   const [activeTab, setActiveTab] = useState("overview");
   const [teacherForm, setTeacherForm] = useState({ name: "", email: "" });
   const [itemForm, setItemForm] = useState({
@@ -55,7 +56,7 @@ export default function AdminPanel() {
   const handleAddTeacher = (e) => {
     e.preventDefault();
     if (teacherForm.name && teacherForm.email) {
-      addTeacher(teacherForm.name, teacherForm.email);
+      // TODO: dispatch addTeacher action here
       setTeacherForm({ name: "", email: "" });
       setShowTeacherDialog(false);
     }
@@ -64,7 +65,7 @@ export default function AdminPanel() {
   const handleAddItem = (e) => {
     e.preventDefault();
     if (itemForm.name && itemForm.price) {
-      addItem(itemForm.name, parseInt(itemForm.price), itemForm.description);
+      // TODO: dispatch addItem action here
       setItemForm({ name: "", price: "", description: "" });
       setShowItemDialog(false);
     }

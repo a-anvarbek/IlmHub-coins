@@ -1,6 +1,6 @@
 // Libraries
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import {
   LogIn,
@@ -27,7 +27,7 @@ import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { Alert, AlertDescription } from "../../components/ui/alert";
 
 // Redux
-import { loginAsync } from "../../utils/redux/authSlice";
+import { loginAsync, selectAuth } from "../../utils/redux/authSlice";
 
 // Routes
 import ROUTES from "../../router/routes";
@@ -35,6 +35,7 @@ import ROUTES from "../../router/routes";
 export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { token, role, status } = useSelector(selectAuth);
 
   const [showPassword, setShowPassword] = useState(false);
   const [loginType, setLoginType] = useState("student");
@@ -45,6 +46,16 @@ export default function LoginPage() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Redirect after successful login
+  useEffect(() => {
+    if (status === "succeeded" && token && role !== null) {
+      const numericRole = Number(role);
+      if (numericRole === 0) navigate(ROUTES.ADMIN);
+      else if (numericRole === 1) navigate(ROUTES.TEACHER);
+      else if (numericRole === 2) navigate(ROUTES.STUDENT);
+    }
+  }, [status, token, role, navigate]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -68,19 +79,7 @@ export default function LoginPage() {
       const resultAction = await dispatch(loginAsync(credentials));
       const result = resultAction.payload;
 
-      if (result) {
-        const backendRole = result.role;
-
-        if (backendRole === 0) navigate(ROUTES.ADMIN);
-        else if (backendRole === 1) navigate(ROUTES.TEACHER);
-        else if (backendRole === 2) navigate(ROUTES.STUDENT);
-        else {
-          // fallback
-          if (loginType === "student") navigate(ROUTES.STUDENT);
-          else if (loginType === "teacher") navigate(ROUTES.TEACHER);
-          else navigate(ROUTES.ADMIN);
-        }
-      } else {
+      if (!result) {
         setError("Incorrect credentials");
       }
     } catch (err) {

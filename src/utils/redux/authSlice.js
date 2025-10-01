@@ -1,14 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { authApi } from "../api";
+import { jwtDecode } from "jwt-decode";
 
+// === Initial State ===
 const initialState = {
-  authList: [],
-  authDetail: null,
+  token: typeof window !== "undefined" ? localStorage.getItem("token") : null,
+  role:
+    typeof window !== "undefined" && localStorage.getItem("role")
+      ? Number(localStorage.getItem("role"))
+      : null,
   status: "idle",
   error: null,
+  isAuthenticated: false,
 };
 
-// ===== THUNKS =====
+// === Thunks ===
 
 // Register
 export const registerAsync = createAsyncThunk(
@@ -18,7 +24,7 @@ export const registerAsync = createAsyncThunk(
       const response = await authApi.register(data);
       return response.data;
     } catch (error) {
-      return rejectWithValue("Failed to create register");
+      return rejectWithValue("Failed to register");
     }
   }
 );
@@ -29,35 +35,9 @@ export const loginAsync = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await authApi.login(data);
-      return response.data;
+      return response.data; // expected: { token, role }
     } catch (error) {
-      return rejectWithValue("Failed to create login");
-    }
-  }
-);
-
-// Get Confirmation
-export const getConfirmationAsync = createAsyncThunk(
-  "auth/getConfirmation",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await authApi.getConfirmation();
-      return response.data;
-    } catch (error) {
-      return rejectWithValue("Failed to fetch confirmation");
-    }
-  }
-);
-
-// Resend Confirmation
-export const resendConfirmationAsync = createAsyncThunk(
-  "auth/resendConfirmation",
-  async (data, { rejectWithValue }) => {
-    try {
-      const response = await authApi.resendConfirmation(data);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue("Failed to create resend confirmation");
+      return rejectWithValue("Failed to login");
     }
   }
 );
@@ -70,7 +50,7 @@ export const forgotPasswordAsync = createAsyncThunk(
       const response = await authApi.forgotPassword(data);
       return response.data;
     } catch (error) {
-      return rejectWithValue("Failed to create forgot password");
+      return rejectWithValue("Failed to request password reset");
     }
   }
 );
@@ -83,17 +63,25 @@ export const resetPasswordAsync = createAsyncThunk(
       const response = await authApi.resetPassword(data);
       return response.data;
     } catch (error) {
-      return rejectWithValue("Failed to create reset password");
+      return rejectWithValue("Failed to reset password");
     }
   }
 );
 
-// ===== SLICE =====
+// === Slice ===
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    resetAuthSlice: () => initialState,
+    logout: (state) => {
+      state.token = null;
+      state.role = null;
+      state.isAuthenticated = false;
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -102,9 +90,8 @@ const authSlice = createSlice({
         state.status = "loading";
         state.error = null;
       })
-      .addCase(registerAsync.fulfilled, (state, action) => {
+      .addCase(registerAsync.fulfilled, (state) => {
         state.status = "succeeded";
-        state.authList.push(action.payload);
       })
       .addCase(registerAsync.rejected, (state, action) => {
         state.status = "failed";
@@ -118,37 +105,38 @@ const authSlice = createSlice({
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.authList.push(action.payload);
+        const payload = action.payload || {};
+        const token = payload.token;
+        let role = payload.role;
+
+        if (!role && token) {
+          try {
+            const decoded = jwtDecode(token);
+            role =
+              decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ??
+              decoded.role ??
+              null;
+          } catch (err) {
+            role = null;
+          }
+        }
+
+        // Convert string roles to numeric mapping
+        if (typeof role === "string") {
+          const map = { Admin: 0, Teacher: 1, Student: 2 };
+          role = map[role] !== undefined ? map[role] : null;
+        }
+
+        state.token = token;
+        state.role = role !== null ? Number(role) : null;
+        state.isAuthenticated = true;
+
+        if (typeof window !== "undefined") {
+          if (token) localStorage.setItem("token", token);
+          if (role !== null) localStorage.setItem("role", String(role));
+        }
       })
       .addCase(loginAsync.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Get Confirmation
-      .addCase(getConfirmationAsync.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(getConfirmationAsync.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.authList = action.payload;
-      })
-      .addCase(getConfirmationAsync.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Resend Confirmation
-      .addCase(resendConfirmationAsync.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(resendConfirmationAsync.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.authList.push(action.payload);
-      })
-      .addCase(resendConfirmationAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
@@ -158,9 +146,8 @@ const authSlice = createSlice({
         state.status = "loading";
         state.error = null;
       })
-      .addCase(forgotPasswordAsync.fulfilled, (state, action) => {
+      .addCase(forgotPasswordAsync.fulfilled, (state) => {
         state.status = "succeeded";
-        state.authList.push(action.payload);
       })
       .addCase(forgotPasswordAsync.rejected, (state, action) => {
         state.status = "failed";
@@ -172,9 +159,8 @@ const authSlice = createSlice({
         state.status = "loading";
         state.error = null;
       })
-      .addCase(resetPasswordAsync.fulfilled, (state, action) => {
+      .addCase(resetPasswordAsync.fulfilled, (state) => {
         state.status = "succeeded";
-        state.authList.push(action.payload);
       })
       .addCase(resetPasswordAsync.rejected, (state, action) => {
         state.status = "failed";
@@ -183,6 +169,6 @@ const authSlice = createSlice({
   },
 });
 
+export const { logout } = authSlice.actions;
 export const selectAuth = (state) => state.auth;
-export const { resetAuthSlice } = authSlice.actions;
 export default authSlice.reducer;
