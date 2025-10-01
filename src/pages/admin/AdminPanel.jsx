@@ -1,5 +1,6 @@
 // Libraries
 import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import {
   Users,
   Package,
@@ -37,16 +38,37 @@ import {
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
-import { useAuth } from "../../contexts/AuthContext";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../utils/redux/authSlice";
+import { Navigate } from "react-router-dom";
 
 import OverviewTab from "./OverviewTab";
 import TeachersTab from "./TeachersTab";
 import ItemsTab from "./ItemsTab";
 import StudentsTab from "./StudentsTab";
+import GroupsTab from "./GroupsTab";
 
 export default function AdminPanel() {
   const { t } = useLanguage();
-  const { teachers, items, students, addTeacher, addItem } = useAuth();
+  const { token } = useSelector(selectAuth);
+  const teachers = [];
+  const items = [];
+  const students = [];
+  const addTeacher = () => {};
+  const addItem = () => {};
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  let decoded = null;
+  try {
+    decoded = jwtDecode(token);
+  } catch (err) {
+    return <Navigate to="/login" replace />;
+  }
+  const userRole = decoded?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  if (userRole !== "Admin") {
+    return <Navigate to="/login" replace />;
+  }
   const [activeTab, setActiveTab] = useState("overview");
   const [teacherForm, setTeacherForm] = useState({ name: "", email: "" });
   const [itemForm, setItemForm] = useState({
@@ -88,6 +110,7 @@ export default function AdminPanel() {
     { id: "teachers", label: "Teachers", icon: <Users className="w-4 h-4" /> },
     { id: "items", label: "Items", icon: <Package className="w-4 h-4" /> },
     { id: "students", label: "Students", icon: <Shield className="w-4 h-4" /> },
+    { id: "groups", label: "Groups", icon: <Users className="w-4 h-4" /> },
   ];
 
   return (
@@ -160,6 +183,11 @@ export default function AdminPanel() {
           {/* Students Tab */}
           {activeTab === "students" && (
             <StudentsTab students={students} t={t} />
+          )}
+
+          {/* Groups Tab */}
+          {activeTab === "groups" && (
+            <GroupsTab t={t} />
           )}
         </div>
       </div>
