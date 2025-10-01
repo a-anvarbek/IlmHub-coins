@@ -28,7 +28,7 @@ export default function Header() {
     { key: ROUTES.ABOUT, label: t("nav.about") },
     { key: ROUTES.FEATURES, label: t("nav.features") },
     { key: ROUTES.CONTACT, label: t("nav.contact") },
-    { key: ROUTES.SHOP, label: t("nav.shop") },
+    { key: ROUTES.SHOP, label: t("Shop") },
   ];
 
   const handleLogout = () => {
