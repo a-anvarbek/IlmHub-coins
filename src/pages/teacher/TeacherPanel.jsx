@@ -7,7 +7,11 @@ import {
   Gift,
   BarChart3,
   DollarSign,
+  LogOut,
 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout, selectAuth } from "../../utils/redux/authSlice";
 import { toast } from "sonner";
 
 // Components
@@ -33,7 +37,6 @@ import {
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
-import { useAuth } from "../../contexts/AuthContext";
 import OverviewTab from "./OverviewTab";
 
 const tabs = [
@@ -61,7 +64,7 @@ const tabs = [
 
 export default function TeacherPanel() {
   const { t } = useLanguage();
-  const { students, addStudent, giveCoins, user } = useAuth();
+  const { students = [], user } = useSelector(selectAuth);
   const [activeTab, setActiveTab] = useState("overview");
   const [studentForm, setStudentForm] = useState({ name: "" });
   const [coinForm, setCoinForm] = useState({ studentId: "", amount: "" });
@@ -76,6 +79,14 @@ export default function TeacherPanel() {
     groupIds: [],
   });
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   const handleAddStudent = (e) => {
     e.preventDefault();
     const { firstName, lastName, info, groupIds } = newStudentForm;
@@ -86,7 +97,7 @@ export default function TeacherPanel() {
             .split(",")
             .map((id) => id.trim())
             .filter((id) => id.length > 0);
-      addStudent({ firstName: firstName.trim(), lastName: lastName.trim(), info, groupIds: groupIdsArray });
+      // dispatch(addStudentAction({ firstName: firstName.trim(), lastName: lastName.trim(), info, groupIds: groupIdsArray })) // TODO
       toast.success(`Student ${firstName} ${lastName} added successfully!`);
       setNewStudentForm({ firstName: "", lastName: "", info: "", groupIds: [] });
       setShowAddStudentDialog(false);
@@ -101,7 +112,7 @@ export default function TeacherPanel() {
       const amount = parseInt(coinForm.amount);
       const student = students.find((s) => s.studentId === coinForm.studentId);
       if (student && amount > 0) {
-        giveCoins(coinForm.studentId, amount);
+        // dispatch(giveCoinsAction(coinForm.studentId, amount)) // TODO
         toast.success(`${amount} coins given to ${student.name}`);
         setCoinForm({ studentId: "", amount: "" });
         setShowCoinDialog(false);
@@ -125,12 +136,18 @@ export default function TeacherPanel() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{t("teacher.title")}</h1>
-            <p className="text-muted-foreground">
-              Welcome back, {user?.name}! Manage your students and reward their
-              achievements.
-            </p>
+          <div className="mb-8 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">{t("teacher.title")}</h1>
+              <p className="text-muted-foreground">
+                Welcome back, {user?.name}! Manage your students and reward their
+                achievements.
+              </p>
+            </div>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
           </div>
 
           {/* Navigation Tabs */}

@@ -35,7 +35,7 @@ import ROUTES from "../../router/routes";
 export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { token, role, status } = useSelector(selectAuth);
+  const { token, role, status, isAuthenticated } = useSelector(selectAuth);
 
   const [showPassword, setShowPassword] = useState(false);
   const [loginType, setLoginType] = useState("student");
@@ -49,13 +49,13 @@ export default function LoginPage() {
 
   // Redirect after successful login
   useEffect(() => {
-    if (status === "succeeded" && token && role !== null) {
+    if (isAuthenticated && token && role !== null) {
       const numericRole = Number(role);
-      if (numericRole === 0) navigate(ROUTES.ADMIN);
-      else if (numericRole === 1) navigate(ROUTES.TEACHER);
-      else if (numericRole === 2) navigate(ROUTES.STUDENT);
+      if (numericRole === 0) navigate(ROUTES.ADMIN, { replace: true });
+      else if (numericRole === 1) navigate(ROUTES.TEACHER, { replace: true });
+      else if (numericRole === 2) navigate(ROUTES.STUDENT, { replace: true });
     }
-  }, [status, token, role, navigate]);
+  }, [isAuthenticated, token, role, navigate]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({

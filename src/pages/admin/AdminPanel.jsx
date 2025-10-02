@@ -10,6 +10,7 @@ import {
   Shield,
   Mail,
   DollarSign,
+  LogOut,
 } from "lucide-react";
 
 // Components
@@ -107,9 +108,7 @@ export default function AdminPanel() {
                   Manage your educational platform and monitor system performance
                 </p>
               </div>
-              <Button onClick={handleLogout} variant="outline">
-                Logout
-              </Button>
+             
             </div>
           </div>
 
