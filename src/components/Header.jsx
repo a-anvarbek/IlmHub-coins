@@ -25,6 +25,7 @@ export default function Header() {
   const { isDark, toggleTheme } = useTheme();
   const dispatch = useDispatch();
   const { token, role, isAuthenticated } = useSelector(selectAuth);
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const roleRoutes = { 0: ROUTES.ADMIN, 1: ROUTES.TEACHER, 2: ROUTES.STUDENT };
