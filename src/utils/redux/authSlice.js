@@ -131,6 +131,9 @@ const authSlice = createSlice({
         state.role = role !== null ? Number(role) : null;
         state.isAuthenticated = true;
 
+        console.log("AuthSlice Login Success -> Token:", token);
+        console.log("AuthSlice Login Success -> Role:", role);
+
         if (typeof window !== "undefined") {
           if (token) localStorage.setItem("token", token);
           if (role !== null) localStorage.setItem("role", String(role));

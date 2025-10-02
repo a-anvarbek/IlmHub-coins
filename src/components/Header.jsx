@@ -1,6 +1,6 @@
 // Libraries
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { Moon, Sun, Globe, User, LogOut, Menu, X } from "lucide-react";
 
 // Components
@@ -20,6 +20,7 @@ import ROUTES from "../router/routes";
 
 export default function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
   const dispatch = useDispatch();
@@ -29,7 +30,9 @@ export default function Header() {
   const roleRoutes = { 0: ROUTES.ADMIN, 1: ROUTES.TEACHER, 2: ROUTES.STUDENT };
 
   const navItems =
-    role === 0
+    location.pathname === ROUTES.TEACHER
+      ? [{ key: ROUTES.HOME, label: "IlmHub", isLogo: true }]
+      : role === 0
       ? [{ key: ROUTES.HOME, label: "IlmHub", isLogo: true }]
       : [
           { key: ROUTES.HOME, label: "IlmHub", isLogo: true },

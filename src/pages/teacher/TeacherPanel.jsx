@@ -64,7 +64,9 @@ const tabs = [
 
 export default function TeacherPanel() {
   const { t } = useLanguage();
-  const { students = [], user } = useSelector(selectAuth);
+  const { students = [], user, token, role } = useSelector(selectAuth);
+  console.log("Teacher token:", token);
+  console.log("Teacher role:", role);
   const [activeTab, setActiveTab] = useState("overview");
   const [studentForm, setStudentForm] = useState({ name: "" });
   const [coinForm, setCoinForm] = useState({ studentId: "", amount: "" });
