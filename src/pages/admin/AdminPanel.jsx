@@ -37,11 +37,14 @@ import {
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
-import { useSelector } from "react-redux";
-import { selectAuth } from "../../utils/redux/authSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { selectAuth, logout } from "../../utils/redux/authSlice";
 
 export default function AdminPanel() {
   const { t } = useLanguage();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { teachers = [], items = [], students = [] } = useSelector(selectAuth);
   const [activeTab, setActiveTab] = useState("overview");
   const [teacherForm, setTeacherForm] = useState({ name: "", email: "" });
@@ -71,6 +74,11 @@ export default function AdminPanel() {
     }
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   const totalCoins = students.reduce((sum, student) => sum + student.coins, 0);
   const averageCoins =
     students.length > 0 ? Math.round(totalCoins / students.length) : 0;
@@ -92,10 +100,17 @@ export default function AdminPanel() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{t("admin.title")}</h1>
-            <p className="text-muted-foreground">
-              Manage your educational platform and monitor system performance
-            </p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">{t("admin.title")}</h1>
+                <p className="text-muted-foreground">
+                  Manage your educational platform and monitor system performance
+                </p>
+              </div>
+              <Button onClick={handleLogout} variant="outline">
+                Logout
+              </Button>
+            </div>
           </div>
 
           {/* Navigation Tabs */}
