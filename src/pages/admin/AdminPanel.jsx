@@ -60,7 +60,6 @@ export default function AdminPanel() {
   const handleAddTeacher = (e) => {
     e.preventDefault();
     if (teacherForm.name && teacherForm.email) {
-      // TODO: dispatch addTeacher action here
       setTeacherForm({ name: "", email: "" });
       setShowTeacherDialog(false);
     }
@@ -69,7 +68,6 @@ export default function AdminPanel() {
   const handleAddItem = (e) => {
     e.preventDefault();
     if (itemForm.name && itemForm.price) {
-      // TODO: dispatch addItem action here
       setItemForm({ name: "", price: "", description: "" });
       setShowItemDialog(false);
     }
