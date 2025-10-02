@@ -1,6 +1,6 @@
 // Libraries
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { Moon, Sun, Globe, User, LogOut, Menu, X } from "lucide-react";
 
 // Components
@@ -10,28 +10,40 @@ import { Switch } from "./ui/switch";
 // Contexts
 import { useLanguage } from "../contexts/LanguageContext";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAuth } from "../contexts/AuthContext";
+
+// Redux
+import { useSelector, useDispatch } from "react-redux";
+import { selectAuth, logout } from "../utils/redux/authSlice";
 
 // Routes
 import ROUTES from "../router/routes";
 
 export default function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const dispatch = useDispatch();
+  const { token, role, isAuthenticated } = useSelector(selectAuth);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navItems = [
-    { key: ROUTES.HOME, label: "IlmHub", isLogo: true },
-    { key: ROUTES.ABOUT, label: t("nav.about") },
-    { key: ROUTES.FEATURES, label: t("nav.features") },
-    { key: ROUTES.CONTACT, label: t("nav.contact") },
-  ];
+  const roleRoutes = { 0: ROUTES.ADMIN, 1: ROUTES.TEACHER, 2: ROUTES.STUDENT };
+
+  const navItems =
+    location.pathname === ROUTES.TEACHER
+      ? [{ key: ROUTES.HOME, label: "IlmHub", isLogo: true }]
+      : role === 0
+      ? [{ key: ROUTES.HOME, label: "IlmHub", isLogo: true }]
+      : [
+          { key: ROUTES.HOME, label: "IlmHub", isLogo: true },
+          { key: ROUTES.ABOUT, label: t("nav.about") },
+          { key: ROUTES.FEATURES, label: t("nav.features") },
+          { key: ROUTES.CONTACT, label: t("nav.contact") },
+        ];
 
   const handleLogout = () => {
-    logout();
-    navigate(ROUTES.HOME);
+    dispatch(logout());
+    navigate(ROUTES.LOGIN);
   };
 
   return (
@@ -83,16 +95,16 @@ export default function Header() {
             </div>
 
             {/* User Menu */}
-            {user ? (
+            {isAuthenticated ? (
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate(`/${user.role}`)}
+                  onClick={() => navigate(roleRoutes[role])}
                   className="hidden sm:flex"
                 >
                   <User className="w-4 h-4 mr-1" />
-                  {user.name}
+                  Profile
                 </Button>
                 <Button variant="ghost" size="sm" onClick={handleLogout}>
                   <LogOut className="w-4 h-4" />
@@ -157,19 +169,19 @@ export default function Header() {
                   {language === "en" ? "O'zbekcha" : "English"}
                 </Button>
 
-                {user ? (
+                {isAuthenticated ? (
                   <>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        navigate(`/${user.role}`);
+                        navigate(roleRoutes[role]);
                         setIsMenuOpen(false);
                       }}
                       className="justify-start"
                     >
                       <User className="w-4 h-4 mr-2" />
-                      {user.name}
+                      Profile
                     </Button>
                     <Button
                       variant="ghost"
