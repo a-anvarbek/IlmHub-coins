@@ -10,6 +10,7 @@ import {
   Shield,
   Mail,
   DollarSign,
+  LogOut,
 } from "lucide-react";
 
 // Components
@@ -37,11 +38,15 @@ import {
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
-import { useAuth } from "../../contexts/AuthContext";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { selectAuth, logout } from "../../utils/redux/authSlice";
 
 export default function AdminPanel() {
   const { t } = useLanguage();
-  const { teachers, items, students, addTeacher, addItem } = useAuth();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { teachers = [], items = [], students = [] } = useSelector(selectAuth);
   const [activeTab, setActiveTab] = useState("overview");
   const [teacherForm, setTeacherForm] = useState({ name: "", email: "" });
   const [itemForm, setItemForm] = useState({
@@ -55,7 +60,7 @@ export default function AdminPanel() {
   const handleAddTeacher = (e) => {
     e.preventDefault();
     if (teacherForm.name && teacherForm.email) {
-      addTeacher(teacherForm.name, teacherForm.email);
+      // TODO: dispatch addTeacher action here
       setTeacherForm({ name: "", email: "" });
       setShowTeacherDialog(false);
     }
@@ -64,10 +69,15 @@ export default function AdminPanel() {
   const handleAddItem = (e) => {
     e.preventDefault();
     if (itemForm.name && itemForm.price) {
-      addItem(itemForm.name, parseInt(itemForm.price), itemForm.description);
+      // TODO: dispatch addItem action here
       setItemForm({ name: "", price: "", description: "" });
       setShowItemDialog(false);
     }
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
   };
 
   const totalCoins = students.reduce((sum, student) => sum + student.coins, 0);
@@ -91,10 +101,15 @@ export default function AdminPanel() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{t("admin.title")}</h1>
-            <p className="text-muted-foreground">
-              Manage your educational platform and monitor system performance
-            </p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">{t("admin.title")}</h1>
+                <p className="text-muted-foreground">
+                  Manage your educational platform and monitor system performance
+                </p>
+              </div>
+             
+            </div>
           </div>
 
           {/* Navigation Tabs */}

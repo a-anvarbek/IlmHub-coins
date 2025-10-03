@@ -23,6 +23,19 @@ export const getGroupAllAsync = createAsyncThunk(
   }
 );
 
+// Get My Groups
+export const getMyGroupsAsync = createAsyncThunk(
+  "group/getMyGroups",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await groupApi.getMyGroups();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue("Failed to fetch my groups");
+    }
+  }
+);
+
 // Get Group By Id
 export const getGroupByIdAsync = createAsyncThunk(
   "group/getGroupById",
@@ -54,10 +67,15 @@ export const postGroupAsync = createAsyncThunk(
   "group/postGroup",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await groupApi.postGroup(data);
+      console.log("DEBUG: creating group with data =>", data);
+      const response = await groupApi.postGroup({
+        name: data.name,
+        description: data.description,
+      });
       return response.data;
     } catch (error) {
-      return rejectWithValue("Failed to create group");
+      console.error("DEBUG: postGroupAsync error =>", error.response?.data || error.message);
+      return rejectWithValue(error.response?.data?.message || "Failed to create group");
     }
   }
 );
@@ -98,6 +116,20 @@ const groupSlice = createSlice({
         state.error = action.payload;
       })
 
+      // Get My Groups
+      .addCase(getMyGroupsAsync.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getMyGroupsAsync.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.groupList = action.payload;
+      })
+      .addCase(getMyGroupsAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
       // Get Group By Id
       .addCase(getGroupByIdAsync.pending, (state) => {
         state.status = "loading";
@@ -133,7 +165,11 @@ const groupSlice = createSlice({
       })
       .addCase(postGroupAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.groupList.push(action.payload);
+        if (Array.isArray(state.groupList)) {
+          state.groupList.push(action.payload);
+        } else {
+          state.groupList = [action.payload];
+        }
       })
       .addCase(postGroupAsync.rejected, (state, action) => {
         state.status = "failed";
@@ -148,11 +184,13 @@ const groupSlice = createSlice({
       .addCase(putGroupAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
         const updatedGroup = action.payload;
-        const index = state.groupList.findIndex(
-          (group) => group.id === updatedGroup.id
-        );
-        if (index !== -1) {
-          state.groupList[index] = updatedGroup;
+        if (Array.isArray(state.groupList)) {
+          const index = state.groupList.findIndex(
+            (group) => group.id === updatedGroup.id
+          );
+          if (index !== -1) {
+            state.groupList[index] = updatedGroup;
+          }
         }
       })
       .addCase(putGroupAsync.rejected, (state, action) => {

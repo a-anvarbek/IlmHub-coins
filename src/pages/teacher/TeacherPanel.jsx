@@ -7,7 +7,11 @@ import {
   Gift,
   BarChart3,
   DollarSign,
+  LogOut,
 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout, selectAuth } from "../../utils/redux/authSlice";
 import { toast } from "sonner";
 
 // Components
@@ -22,10 +26,22 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import { Badge } from "../../components/ui/badge";
+import GroupsTab from "./GroupsTab";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../components/ui/dialog";
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
-import { useAuth } from "../../contexts/AuthContext";
+import OverviewTab from "./OverviewTab";
+
+function MyGroupsTab() {
+  return <GroupsTab />;
+}
 
 const tabs = [
   {
@@ -33,34 +49,61 @@ const tabs = [
     label: "Overview",
     icon: <BarChart3 className="w-4 h-4" />,
   },
-  {
-    id: "students",
-    label: "My Students",
-    icon: <Users className="w-4 h-4" />,
-  },
+
   {
     id: "coins",
     label: "Coin Management",
     icon: <Coins className="w-4 h-4" />,
   },
+  {
+    id: "myGroups",
+    label: "My Groups",
+    icon: <Users className="w-4 h-4" />,
+  },
 ];
 
 export default function TeacherPanel() {
   const { t } = useLanguage();
-  const { students, addStudent, giveCoins, user } = useAuth();
+  const { students = [], user, token, role } = useSelector(selectAuth);
+
   const [activeTab, setActiveTab] = useState("overview");
   const [studentForm, setStudentForm] = useState({ name: "" });
   const [coinForm, setCoinForm] = useState({ studentId: "", amount: "" });
   const [showStudentDialog, setShowStudentDialog] = useState(false);
   const [showCoinDialog, setShowCoinDialog] = useState(false);
 
+  const [showAddStudentDialog, setShowAddStudentDialog] = useState(false);
+  const [newStudentForm, setNewStudentForm] = useState({
+    firstName: "",
+    lastName: "",
+    info: "",
+    groupIds: [],
+  });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   const handleAddStudent = (e) => {
     e.preventDefault();
-    if (studentForm.name) {
-      const studentId = addStudent(studentForm.name);
-      toast.success(`Student added successfully! ID: ${studentId}`);
-      setStudentForm({ name: "" });
-      setShowStudentDialog(false);
+    const { firstName, lastName, info, groupIds } = newStudentForm;
+    if (firstName.trim() && lastName.trim()) {
+      const groupIdsArray = Array.isArray(groupIds)
+        ? groupIds
+        : groupIds
+            .split(",")
+            .map((id) => id.trim())
+            .filter((id) => id.length > 0);
+      // dispatch(addStudentAction({ firstName: firstName.trim(), lastName: lastName.trim(), info, groupIds: groupIdsArray })) // TODO
+      toast.success(`Student ${firstName} ${lastName} added successfully!`);
+      setNewStudentForm({ firstName: "", lastName: "", info: "", groupIds: [] });
+      setShowAddStudentDialog(false);
+    } else {
+      toast.error("First Name and Last Name are required");
     }
   };
 
@@ -70,7 +113,7 @@ export default function TeacherPanel() {
       const amount = parseInt(coinForm.amount);
       const student = students.find((s) => s.studentId === coinForm.studentId);
       if (student && amount > 0) {
-        giveCoins(coinForm.studentId, amount);
+        // dispatch(giveCoinsAction(coinForm.studentId, amount)) // TODO
         toast.success(`${amount} coins given to ${student.name}`);
         setCoinForm({ studentId: "", amount: "" });
         setShowCoinDialog(false);
@@ -94,12 +137,18 @@ export default function TeacherPanel() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{t("teacher.title")}</h1>
-            <p className="text-muted-foreground">
-              Welcome back, {user?.name}! Manage your students and reward their
-              achievements.
-            </p>
+          <div className="mb-8 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">{t("teacher.title")}</h1>
+              <p className="text-muted-foreground">
+                Welcome back, {user?.name}! Manage your students and reward their
+                achievements.
+              </p>
+            </div>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
           </div>
 
           {/* Navigation Tabs */}
@@ -122,68 +171,13 @@ export default function TeacherPanel() {
 
           {/* Overview Tab */}
           {activeTab === "overview" && (
-            <div className="space-y-6">
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Total Students
-                        </p>
-                        <p className="text-2xl font-bold">{students.length}</p>
-                      </div>
-                      <GraduationCap className="w-8 h-8 text-blue-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Total Coins Distributed
-                        </p>
-                        <p className="text-2xl font-bold">{totalCoins}</p>
-                      </div>
-                      <DollarSign className="w-8 h-8 text-yellow-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Average Coins
-                        </p>
-                        <p className="text-2xl font-bold">{averageCoins}</p>
-                      </div>
-                      <BarChart3 className="w-8 h-8 text-green-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Top Performer
-                        </p>
-                        <p className="text-lg font-bold">
-                          {topStudent?.name || "N/A"}
-                        </p>
-                      </div>
-                      <Gift className="w-8 h-8 text-purple-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+                        <OverviewTab
+                        students={students}
+                        totalCoins={totalCoins}
+                        averageCoins={averageCoins}
+                        topStudent={topStudent}
+                      />
+            
           )}
 
           {/* Students Tab */}
@@ -191,6 +185,93 @@ export default function TeacherPanel() {
             <div className="space-y-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">{t("teacher.students")}</h2>
+                <Dialog open={showAddStudentDialog} onOpenChange={setShowAddStudentDialog}>
+                  <DialogTrigger asChild>
+                    <Button variant="default">Add Student</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Add New Student</DialogTitle>
+                    </DialogHeader>
+                    <form
+                      onSubmit={handleAddStudent}
+                      className="grid gap-4 py-4"
+                    >
+                      <div className="grid grid-cols-1 gap-2">
+                        <label htmlFor="firstName" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          First Name
+                        </label>
+                        <input
+                          id="firstName"
+                          type="text"
+                          value={newStudentForm.firstName}
+                          onChange={(e) =>
+                            setNewStudentForm((prev) => ({
+                              ...prev,
+                              firstName: e.target.value,
+                            }))
+                          }
+                          required
+                          className="input"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        <label htmlFor="lastName" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Last Name
+                        </label>
+                        <input
+                          id="lastName"
+                          type="text"
+                          value={newStudentForm.lastName}
+                          onChange={(e) =>
+                            setNewStudentForm((prev) => ({
+                              ...prev,
+                              lastName: e.target.value,
+                            }))
+                          }
+                          required
+                          className="input"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        <label htmlFor="info" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Info
+                        </label>
+                        <textarea
+                          id="info"
+                          value={newStudentForm.info}
+                          onChange={(e) =>
+                            setNewStudentForm((prev) => ({
+                              ...prev,
+                              info: e.target.value,
+                            }))
+                          }
+                          className="textarea"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        <label htmlFor="groupIds" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Group IDs (comma separated)
+                        </label>
+                        <input
+                          id="groupIds"
+                          type="text"
+                          value={Array.isArray(newStudentForm.groupIds) ? newStudentForm.groupIds.join(", ") : newStudentForm.groupIds}
+                          onChange={(e) =>
+                            setNewStudentForm((prev) => ({
+                              ...prev,
+                              groupIds: e.target.value,
+                            }))
+                          }
+                          className="input"
+                        />
+                      </div>
+                      <div className="flex justify-end pt-4">
+                        <Button type="submit">Add Student</Button>
+                      </div>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <Card>
@@ -198,10 +279,10 @@ export default function TeacherPanel() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>{t("common.name")}</TableHead>
-                        <TableHead>Student ID</TableHead>
-                        <TableHead>{t("common.coins")}</TableHead>
-                        <TableHead>Performance</TableHead>
+                        <TableHead>{t("common.firstName")}</TableHead>
+                        <TableHead>{t("common.lastName")}</TableHead>
+                        <TableHead>Info</TableHead>
+                        <TableHead>Group IDs</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -209,33 +290,13 @@ export default function TeacherPanel() {
                       {students.map((student) => (
                         <TableRow key={student.id}>
                           <TableCell className="font-medium">
-                            {student.name}
+                            {student.firstName}
                           </TableCell>
-                          <TableCell className="font-mono text-sm">
-                            {student.studentId}
+                          <TableCell className="font-medium">
+                            {student.lastName}
                           </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={
-                                student.coins > 30
-                                  ? "default"
-                                  : student.coins > 15
-                                  ? "secondary"
-                                  : "outline"
-                              }
-                            >
-                              {student.coins} coins
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">
-                              {student.coins > 30
-                                ? "Excellent"
-                                : student.coins > 15
-                                ? "Good"
-                                : "Needs improvement"}
-                            </Badge>
-                          </TableCell>
+                          <TableCell>{student.info}</TableCell>
+                          <TableCell>{Array.isArray(student.groupIds) ? student.groupIds.join(", ") : student.groupIds}</TableCell>
                           <TableCell>
                             <Button
                               variant="outline"
@@ -269,6 +330,9 @@ export default function TeacherPanel() {
               </div>
             </div>
           )}
+
+          {/* My Groups Tab */}
+          {activeTab === "myGroups" && <MyGroupsTab />}
         </div>
       </div>
     </div>
