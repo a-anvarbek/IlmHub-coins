@@ -17,7 +17,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   group: groupSlice,
   rewardItem: rewardItemSlice,
-  students: studentSlice,
+  student: studentSlice, 
   transaction: transactionSlice,
   users: userSlice,
 });

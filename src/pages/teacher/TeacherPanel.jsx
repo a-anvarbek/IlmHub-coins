@@ -10,7 +10,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { logout, selectAuth } from "../../utils/redux/authSlice";
 import { toast } from "sonner";
 
@@ -29,7 +29,11 @@ import { Badge } from "../../components/ui/badge";
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
-import OverviewTab from "./OverviewTab";
+// import OverviewTab from "./OverviewTab";
+
+function MyGroupsTab() {
+  return <GroupsTab />;
+}
 
 const tabs = [
   {
@@ -37,23 +41,23 @@ const tabs = [
     label: "Overview",
     icon: <BarChart3 className="w-4 h-4" />,
   },
-  {
-    id: "students",
-    label: "My Students",
-    icon: <Users className="w-4 h-4" />,
-  },
+
   {
     id: "coins",
     label: "Coin Management",
     icon: <Coins className="w-4 h-4" />,
+  },
+  {
+    id: "myGroups",
+    label: "My Groups",
+    icon: <Users className="w-4 h-4" />,
   },
 ];
 
 export default function TeacherPanel() {
   const { t } = useLanguage();
   const { students = [], user, token, role } = useSelector(selectAuth);
-  console.log("Teacher token:", token);
-  console.log("Teacher role:", role);
+
   const [activeTab, setActiveTab] = useState("overview");
   const [studentForm, setStudentForm] = useState({ name: "" });
   const [coinForm, setCoinForm] = useState({ studentId: "", amount: "" });
@@ -306,6 +310,9 @@ export default function TeacherPanel() {
               </div>
             </div>
           )}
+
+          {/* My Groups Tab */}
+          {activeTab === "myGroups" && <MyGroupsTab />}
         </div>
       </div>
     </div>
