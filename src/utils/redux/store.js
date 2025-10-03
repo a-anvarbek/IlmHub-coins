@@ -11,6 +11,7 @@ import rewardItemSlice from "./rewardItemSlice";
 import studentSlice from "./studentSlice";
 import transactionSlice from "./transactionSlice";
 import userSlice from "./userSlice";
+import redemptionSlice from "./redemptionSlice";
 
 // All reducers merging
 const rootReducer = combineReducers({
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   student: studentSlice,
   transaction: transactionSlice,
   user: userSlice,
+  redemption: redemptionSlice,
 });
 
 // Transform
