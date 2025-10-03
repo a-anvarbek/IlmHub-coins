@@ -1,5 +1,8 @@
+// Libraries
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
-
+// Components
 import { Card, CardContent } from "../../components/ui/card";
 import {
   Table,
@@ -11,11 +14,24 @@ import {
 } from "../../components/ui/table";
 import { Badge } from "../../components/ui/badge";
 
-export default function StudentsTab({ students, t }) {
+// Redux
+import { getStudentAsync, selectStudent } from "../../utils/redux/studentSlice";
+
+export default function StudentsTab({ t }) {
+  const dispatch = useDispatch();
+  const { studentList, status, error } = useSelector(selectStudent);
+
+  useEffect(() => {
+    dispatch(getStudentAsync());
+  }, [dispatch]);
+
+  if (status === "loading") return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">All Students</h2>
+        <h2 className="text-2xl font-bold">{t("teacher.students")}</h2>
       </div>
 
       <Card>
@@ -30,9 +46,9 @@ export default function StudentsTab({ students, t }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {students.map((student) => (
+              {studentList?.map((student) => (
                 <TableRow key={student.id}>
-                  <TableCell className="font-medium">{student.name}</TableCell>
+                  <TableCell className="font-medium">{student.firstName} {student.lastName}</TableCell>
                   <TableCell className="font-mono">
                     {student.studentId}
                   </TableCell>
