@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Col, Row } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { getItemAsync, postItemAsync, selectRewardItem } from "../../redux/rewardItemSlice";
+import { getItemAsync, selectRewardItem } from "../../redux/rewardItemSlice";
+import { postRedemptionAsync } from "../../redux/redemptionSlice";
 
 const ShopTab = ({ user, t }) => {
   const dispatch = useDispatch();
@@ -21,7 +22,7 @@ const ShopTab = ({ user, t }) => {
 
   const handleConfirm = () => {
     if (modalItem) {
-      dispatch(postItemAsync({ rewardItemId: modalItem.id, quantity }));
+      dispatch(postRedemptionAsync({ data: { rewardItemId: modalItem.id, quantity } }));
       setModalItem(null);
     }
   };

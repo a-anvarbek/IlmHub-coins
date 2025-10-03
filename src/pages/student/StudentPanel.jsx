@@ -22,7 +22,8 @@ import { InputNumber, Modal } from "antd";
 
 // Redux
 import { getMeAsync, selectAuth } from "../../utils/redux/authSlice";
-import { getItemAsync, postItemAsync, selectRewardItem } from "../../utils/redux/rewardItemSlice";
+import { getItemAsync, selectRewardItem } from "../../utils/redux/rewardItemSlice";
+import { postRedemptionAsync } from "../../utils/redux/redemptionSlice";
 
 const tabs = [
   { id: "overview", label: "Overview", icon: <Trophy className="w-4 h-4" /> },
@@ -86,7 +87,7 @@ export default function StudentPanel() {
         </div>
       ),
       onOk: () => {
-        dispatch(postItemAsync({ rewardItemId: item.id, quantity }));
+        dispatch(postRedemptionAsync({ data: { rewardItemId: item.id, quantity } }));
         toast.success(`Successfully purchased ${item.title} x${quantity}!`);
       },
     });
