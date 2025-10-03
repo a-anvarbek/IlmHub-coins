@@ -12,6 +12,7 @@ import TeachersTab from "./TeachersTab";
 import ItemsTab from "./ItemsTab";
 import StudentsTab from "./StudentsTab";
 import UsersTab from "./UsersTab";
+import RedemptionTab from "./RedemptionTab";
 
 export default function AdminPanel() {
   const { t } = useLanguage();
@@ -84,6 +85,11 @@ export default function AdminPanel() {
     { id: "teachers", label: "Teachers", icon: <Users className="w-4 h-4" /> },
     { id: "items", label: "Items", icon: <Package className="w-4 h-4" /> },
     { id: "students", label: "Students", icon: <Shield className="w-4 h-4" /> },
+    {
+      id: "redemption",
+      label: "Redemption",
+      icon: <Shield className="w-4 h-4" />,
+    },
   ];
 
   return (
@@ -166,6 +172,9 @@ export default function AdminPanel() {
           {activeTab === "students" && (
             <StudentsTab students={students} t={t} />
           )}
+
+          {/* ✅ Redemption tab - Redux ichida data oladi */}
+          {activeTab === "redemption" && <RedemptionTab t={t} />}
         </div>
       </div>
     </div>

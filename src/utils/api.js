@@ -100,10 +100,12 @@ export const userApi = {
 
 // ===== Redemption API =====
 export const redemptionApi = {
-  postRedemption: (data) => axios.post(`${REDEMPTION_API_PREFIX}`, data),
-  getRedemption: () => axios.get(`${REDEMPTION_API_PREFIX}`),
+  postRedemption: (data) => axios.post(`/api/redemptions`, data),
+  getRedemption: () => axios.get(`/api/redemptions`),
   getRedemptionByStudentId: (studentId) =>
-    axios.get(`${REDEMPTION_API_PREFIX}/students/${studentId}`),
-  putRedemption: (redemptionId) =>
-    axios.put(`${REDEMPTION_API_PREFIX}/${redemptionId}/status`),
+    axios.get(`/api/redemptions/students/${studentId}`),
+  putRedemption: (redemptionId, data) =>
+    axios.put(`/api/redemptions/${redemptionId}/status`, data, {
+      headers: { "Content-Type": "application/json" },
+    }),
 };

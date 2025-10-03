@@ -23,7 +23,7 @@ export const postRedemptionAsync = createAsyncThunk(
   }
 );
 
-// Get Redemption
+// Get all redemptions
 export const getRedemptionAsync = createAsyncThunk(
   "redemption/getRedemption",
   async (_, { rejectWithValue }) => {
@@ -51,7 +51,7 @@ export const getRedemptionByStudentIdAsync = createAsyncThunk(
   }
 );
 
-// Put Redemption
+// Put Redemption (update status)
 export const putRedemptionAsync = createAsyncThunk(
   "redemption/putRedemption",
   async ({ redemptionId, data }, { rejectWithValue }) => {
@@ -59,7 +59,9 @@ export const putRedemptionAsync = createAsyncThunk(
       const response = await redemptionApi.putRedemption(redemptionId, data);
       return response.data;
     } catch (error) {
-      return rejectWithValue("Failed to update redemption");
+      return rejectWithValue(
+        error.response?.data || "Failed to update redemption"
+      );
     }
   }
 );
@@ -127,14 +129,10 @@ const redemptionSlice = createSlice({
       .addCase(putRedemptionAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
         const updatedRedemption = action.payload;
-        if (Array.isArray(state.redemptionList)) {
-          const index = state.redemptionList.findIndex(
-            (redemption) => redemption.id === updatedRedemption.id
-          );
-          if (index !== -1) {
-            state.redemptionList[index] = updatedRedemption;
-          }
-        }
+        const index = state.redemptionList.findIndex(
+          (r) => r.id === updatedRedemption.id
+        );
+        if (index !== -1) state.redemptionList[index] = updatedRedemption;
       })
       .addCase(putRedemptionAsync.rejected, (state, action) => {
         state.status = "failed";
