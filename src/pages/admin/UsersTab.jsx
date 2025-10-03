@@ -31,20 +31,20 @@ export default function UsersTab({ t }) {
     dispatch(getUserAsync());
   }, [dispatch]);
 
-  // 🗑️ Delete handler
-  const handleDelete = (id) => {
-    dispatch(deleteUserAsync(id));
+  const handleDelete = async (id) => {
+    await dispatch(deleteUserAsync(id));
+    dispatch(getUserAsync());
   };
 
-  // 📤 Post User handler (ArrowUpCircle bosilganda)
-  const handlePostUser = (user) => {
+  const handlePostUser = async (user) => {
     const data = {
       fullName: user.fullName,
       email: user.email,
-      password: "Default123!", // bu yerda kerakli parolni berasan yoki formdan olasan
+      password: "Default123!",
     };
 
-    dispatch(postUserAsync({ data, id: user.id }));
+    await dispatch(postUserAsync({ data, id: user.id }));
+    dispatch(getUserAsync());
   };
 
   if (status === "loading") return <p>Loading...</p>;
@@ -81,7 +81,6 @@ export default function UsersTab({ t }) {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        {/* 📤 ArrowUpCircle — postUserAsync chaqiradi */}
                         <Button
                           variant="outline"
                           size="sm"
@@ -90,7 +89,6 @@ export default function UsersTab({ t }) {
                           <ArrowUpCircle className="w-4 h-4" />
                         </Button>
 
-                        {/* 🗑️ Delete tugmasi */}
                         <Button
                           variant="destructive"
                           size="sm"
