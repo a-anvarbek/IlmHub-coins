@@ -82,11 +82,6 @@ function GroupsTab() {
     setGiveCoinData({ amount: "", reason: "" });
   };
 
-  const getStudentTotalCoins = (studentId) => {
-    const studentTransactions = transactionList[studentId] || [];
-    return studentTransactions.reduce((sum, t) => sum + t.amount, 0);
-  };
-
   useEffect(() => {
     groupList.forEach((group) => {
       group.students?.forEach((student) => {
@@ -162,7 +157,7 @@ function GroupsTab() {
               setStudentListDialogOpenGroupId(open ? studentListDialogOpenGroupId : null)
             }
           >
-            <DialogContent className="w-[1800px]">
+            <DialogContent className="w-[2200px]">
               <DialogHeader>
                 <DialogTitle>
                   Students in{" "}
@@ -172,15 +167,15 @@ function GroupsTab() {
               {groupList
                 .find((g) => g.id === studentListDialogOpenGroupId)
                 ?.students?.length > 0 ? (
+                <>
                 <Table className="mt-4">
                   <TableHeader>
                     <TableRow>
                       <TableHead>First Name</TableHead>
                       <TableHead>Last Name</TableHead>
                       <TableHead>Username</TableHead>
-                      <TableHead>Code</TableHead>
-                      <TableHead>Password</TableHead>
-                      <TableHead>Coins</TableHead>
+                      <TableHead>Student Code</TableHead>
+                      <TableHead>Balance</TableHead>
                       <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -192,23 +187,8 @@ function GroupsTab() {
                           <TableCell>{student.firstName}</TableCell>
                           <TableCell>{student.lastName}</TableCell>
                           <TableCell>{student.username ?? "-"}</TableCell>
-                          <TableCell>{student.code ?? "-"}</TableCell>
-                          <TableCell className="flex items-center gap-2">
-                            <input
-                              type={passwordVisibility[student.id] ? "text" : "password"}
-                              value={student.password ?? ""}
-                              readOnly
-                              className="border px-2 py-1 rounded w-full"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => togglePasswordVisibility(student.id)}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              {passwordVisibility[student.id] ? "Hide" : "Show"}
-                            </button>
-                          </TableCell>
-                          <TableCell>{getStudentTotalCoins(student.id)}</TableCell>
+                          <TableCell>{student.studentCode ?? "-"}</TableCell>
+                          <TableCell>{student.balance}</TableCell>
                           <TableCell className="text-center">
                             <Dialog
                               open={giveCoinDialogOpenStudentId === student.id}
@@ -273,6 +253,36 @@ function GroupsTab() {
                       ))}
                   </TableBody>
                 </Table>
+                <form onSubmit={handleAddStudentSubmit} className="mt-6 space-y-4">
+                  <h3 className="text-lg font-semibold">Add New Student</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      required
+                      placeholder="First Name"
+                      value={newStudent.firstName}
+                      onChange={(e) =>
+                        setNewStudent((prev) => ({ ...prev, firstName: e.target.value, groupId: studentListDialogOpenGroupId }))
+                      }
+                    />
+                    <Input
+                      required
+                      placeholder="Last Name"
+                      value={newStudent.lastName}
+                      onChange={(e) =>
+                        setNewStudent((prev) => ({ ...prev, lastName: e.target.value, groupId: studentListDialogOpenGroupId }))
+                      }
+                    />
+                    <Input
+                      placeholder="Info"
+                      value={newStudent.info}
+                      onChange={(e) =>
+                        setNewStudent((prev) => ({ ...prev, info: e.target.value, groupId: studentListDialogOpenGroupId }))
+                      }
+                    />
+                  </div>
+                  <Button type="submit">+ Add Student</Button>
+                </form>
+                </>
               ) : (
                 <p className="mt-4">No students in this group.</p>
               )}

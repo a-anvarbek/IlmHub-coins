@@ -26,6 +26,7 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import { Badge } from "../../components/ui/badge";
+import GroupsTab from "./GroupsTab";
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
