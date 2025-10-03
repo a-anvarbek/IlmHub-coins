@@ -36,7 +36,7 @@ export const loginAsync = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await authApi.login(data);
-      return response.data; // expected: { token, role }
+      return response.data;
     } catch (error) {
       return rejectWithValue("Failed to login");
     }
@@ -74,7 +74,7 @@ export const getMeAsync = createAsyncThunk(
   "auth/getMe",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await authApi.getMe();
+      const response = await authApi.me();
       return response.data;
     } catch (error) {
       return rejectWithValue("Failed to fetch user data");
@@ -136,7 +136,6 @@ const authSlice = createSlice({
           }
         }
 
-        // Convert string roles to numeric mapping
         if (typeof role === "string") {
           const map = { Admin: 0, Teacher: 1, Student: 2 };
           role = map[role] !== undefined ? map[role] : null;
@@ -145,9 +144,6 @@ const authSlice = createSlice({
         state.token = token;
         state.role = role !== null ? Number(role) : null;
         state.isAuthenticated = true;
-
-        console.log("AuthSlice Login Success -> Token:", token);
-        console.log("AuthSlice Login Success -> Role:", role);
 
         if (typeof window !== "undefined") {
           if (token) localStorage.setItem("token", token);
@@ -166,7 +162,15 @@ const authSlice = createSlice({
       })
       .addCase(getMeAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload;
+        // Map backend response fields to frontend fields
+        const userData = action.payload;
+        state.user = {
+          ...userData,
+          balance: userData.balance ?? 0,
+          groups: userData.groups ?? [],
+          studentCode: userData.studentCode ?? "",
+          teachers: userData.teachers ?? [],
+        };
       })
       .addCase(getMeAsync.rejected, (state, action) => {
         state.status = "failed";
