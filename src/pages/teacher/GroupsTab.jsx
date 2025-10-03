@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogTrigger,
 } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
 import { postStudentAsync } from "../../utils/redux/studentSlice";
@@ -179,6 +180,7 @@ function GroupsTab() {
                       <TableHead>Username</TableHead>
                       <TableHead>Code</TableHead>
                       <TableHead>Password</TableHead>
+                      <TableHead>Coins</TableHead>
                       <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -206,6 +208,7 @@ function GroupsTab() {
                               {passwordVisibility[student.id] ? "Hide" : "Show"}
                             </button>
                           </TableCell>
+                          <TableCell>{getStudentTotalCoins(student.id)}</TableCell>
                           <TableCell className="text-center">
                             <Dialog
                               open={giveCoinDialogOpenStudentId === student.id}
