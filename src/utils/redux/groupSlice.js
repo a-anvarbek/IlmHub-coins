@@ -71,11 +71,17 @@ export const postGroupAsync = createAsyncThunk(
       const response = await groupApi.postGroup({
         name: data.name,
         description: data.description,
+        teacherId: data.teacherId,
       });
       return response.data;
     } catch (error) {
-      console.error("DEBUG: postGroupAsync error =>", error.response?.data || error.message);
-      return rejectWithValue(error.response?.data?.message || "Failed to create group");
+      console.error(
+        "DEBUG: postGroupAsync error =>",
+        error.response?.data || error.message
+      );
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to create group"
+      );
     }
   }
 );
