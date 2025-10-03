@@ -296,6 +296,7 @@ function GroupsTab() {
                       )}
                     </div>
                   </div>
+                  
                 </>
               ) : (
                 <p className="mt-4">No students in this group.</p>
