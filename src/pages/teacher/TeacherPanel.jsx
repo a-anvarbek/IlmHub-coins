@@ -39,25 +39,25 @@ import {
 import { useLanguage } from "../../contexts/LanguageContext";
 import OverviewTab from "./OverviewTab";
 
+function MyGroupsTab() {
+  return <GroupsTab />;
+}
+
 const tabs = [
   {
     id: "overview",
     label: "Overview",
     icon: <BarChart3 className="w-4 h-4" />,
   },
-  {
-    id: "students",
-    label: "My Students",
-    icon: <Users className="w-4 h-4" />,
-  },
+
   {
     id: "coins",
     label: "Coin Management",
     icon: <Coins className="w-4 h-4" />,
   },
   {
-    id: "myStudents",
-    label: "My Student",
+    id: "myGroups",
+    label: "My Groups",
     icon: <Users className="w-4 h-4" />,
   },
 ];
@@ -65,8 +65,7 @@ const tabs = [
 export default function TeacherPanel() {
   const { t } = useLanguage();
   const { students = [], user, token, role } = useSelector(selectAuth);
-  console.log("Teacher token:", token);
-  console.log("Teacher role:", role);
+
   const [activeTab, setActiveTab] = useState("overview");
   const [studentForm, setStudentForm] = useState({ name: "" });
   const [coinForm, setCoinForm] = useState({ studentId: "", amount: "" });
@@ -332,8 +331,8 @@ export default function TeacherPanel() {
             </div>
           )}
 
-          {/* My Student Tab */}
-          {activeTab === "myStudents" && <GroupsTab />}
+          {/* My Groups Tab */}
+          {activeTab === "myGroups" && <MyGroupsTab />}
         </div>
       </div>
     </div>

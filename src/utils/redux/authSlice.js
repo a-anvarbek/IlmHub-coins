@@ -12,6 +12,7 @@ const initialState = {
   status: "idle",
   error: null,
   isAuthenticated: false,
+  user: null,
 };
 
 // === Thunks ===
@@ -68,6 +69,19 @@ export const resetPasswordAsync = createAsyncThunk(
   }
 );
 
+// Get Me
+export const getMeAsync = createAsyncThunk(
+  "auth/getMe",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authApi.getMe();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue("Failed to fetch user data");
+    }
+  }
+);
+
 // === Slice ===
 const authSlice = createSlice({
   name: "auth",
@@ -77,6 +91,7 @@ const authSlice = createSlice({
       state.token = null;
       state.role = null;
       state.isAuthenticated = false;
+      state.user = null;
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
         localStorage.removeItem("role");
@@ -140,6 +155,20 @@ const authSlice = createSlice({
         }
       })
       .addCase(loginAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // Get Me
+      .addCase(getMeAsync.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getMeAsync.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload;
+      })
+      .addCase(getMeAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
