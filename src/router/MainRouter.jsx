@@ -25,6 +25,7 @@ import TeacherPanel from "../pages/teacher/TeacherPanel";
 
 // Student
 import StudentPanel from "../pages/student/StudentPanel";
+import Shop from "../pages/main/Shop";
 
 const MainRouter = () => {
   return (
@@ -34,6 +35,7 @@ const MainRouter = () => {
       <Route path={ROUTES.ABOUT} element={<AboutPage />} />
       <Route path={ROUTES.FEATURES} element={<FeaturesPage />} />
       <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+      <Route path={ROUTES.SHOP} element={<Shop />} />
 
       {/* Auth */}
       <Route path={ROUTES.SIGN_UP} element={<SignupPage />} />
