@@ -12,6 +12,7 @@ const initialState = {
   status: "idle",
   error: null,
   isAuthenticated: false,
+  user: null,
 };
 
 // === Thunks ===
@@ -35,7 +36,7 @@ export const loginAsync = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await authApi.login(data);
-      return response.data; // expected: { token, role }
+      return response.data;
     } catch (error) {
       return rejectWithValue("Failed to login");
     }
@@ -68,6 +69,19 @@ export const resetPasswordAsync = createAsyncThunk(
   }
 );
 
+// Get Me
+export const getMeAsync = createAsyncThunk(
+  "auth/getMe",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authApi.me();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue("Failed to fetch user data");
+    }
+  }
+);
+
 // === Slice ===
 const authSlice = createSlice({
   name: "auth",
@@ -77,6 +91,7 @@ const authSlice = createSlice({
       state.token = null;
       state.role = null;
       state.isAuthenticated = false;
+      state.user = null;
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
         localStorage.removeItem("role");
@@ -121,7 +136,6 @@ const authSlice = createSlice({
           }
         }
 
-        // Convert string roles to numeric mapping
         if (typeof role === "string") {
           const map = { Admin: 0, Teacher: 1, Student: 2 };
           role = map[role] !== undefined ? map[role] : null;
@@ -131,15 +145,34 @@ const authSlice = createSlice({
         state.role = role !== null ? Number(role) : null;
         state.isAuthenticated = true;
 
-        console.log("AuthSlice Login Success -> Token:", token);
-        console.log("AuthSlice Login Success -> Role:", role);
-
         if (typeof window !== "undefined") {
           if (token) localStorage.setItem("token", token);
           if (role !== null) localStorage.setItem("role", String(role));
         }
       })
       .addCase(loginAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // Get Me
+      .addCase(getMeAsync.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getMeAsync.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        // Map backend response fields to frontend fields
+        const userData = action.payload;
+        state.user = {
+          ...userData,
+          balance: userData.balance ?? 0,
+          groups: userData.groups ?? [],
+          studentCode: userData.studentCode ?? "",
+          teachers: userData.teachers ?? [],
+        };
+      })
+      .addCase(getMeAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })

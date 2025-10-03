@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { transactionApi } from "../api";
 
 const initialState = {
-  transactionList: [],
+  transactionList: {}, // changed to object keyed by studentId
   transactionDetail: null,
   status: "idle",
   error: null,
@@ -13,25 +13,25 @@ const initialState = {
 // Post Transaction
 export const postTransactionAsync = createAsyncThunk(
   "transaction/postTransaction",
-  async ({ data, id }, { rejectWithValue }) => {
+  async ({ studentId, data }, { rejectWithValue }) => {
     try {
-      const response = await transactionApi.postTransaction(data, id);
-      return response.data;
+      const response = await transactionApi.postTransaction(studentId, data);
+      return { studentId, transaction: response.data };
     } catch (error) {
       return rejectWithValue("Failed to add transaction");
     }
   }
 );
 
-// Get Transaction By Id
-export const getTransactionAsync = createAsyncThunk(
-  "transaction/getTransaction",
-  async (id, { rejectWithValue }) => {
+// Get Student Transactions
+export const getStudentTransactionsAsync = createAsyncThunk(
+  "transaction/getStudentTransactions",
+  async (studentId, { rejectWithValue }) => {
     try {
-      const response = await transactionApi.getTransaction(id);
-      return response.data;
+      const response = await transactionApi.getTransactions(studentId);
+      return { studentId, transactions: response.data };
     } catch (error) {
-      return rejectWithValue("Failed to fetch transaction by Id");
+      return rejectWithValue("Failed to fetch transactions for student");
     }
   }
 );
@@ -52,25 +52,28 @@ const transactionSlice = createSlice({
       })
       .addCase(postTransactionAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
-        if (state.transactionList) {
-          state.transactionList.push(action.payload);
+        const { studentId, transaction } = action.payload;
+        if (!state.transactionList[studentId]) {
+          state.transactionList[studentId] = [];
         }
+        state.transactionList[studentId].push(transaction);
       })
       .addCase(postTransactionAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
 
-      // Get Transaction
-      .addCase(getTransactionAsync.pending, (state) => {
+      // Get Student Transactions
+      .addCase(getStudentTransactionsAsync.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(getTransactionAsync.fulfilled, (state, action) => {
+      .addCase(getStudentTransactionsAsync.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.transactionDetail = action.payload;
+        const { studentId, transactions } = action.payload;
+        state.transactionList[studentId] = transactions;
       })
-      .addCase(getTransactionAsync.rejected, (state, action) => {
+      .addCase(getStudentTransactionsAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

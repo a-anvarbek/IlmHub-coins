@@ -41,13 +41,12 @@ export default function LoginPage() {
   const [loginType, setLoginType] = useState("student");
   const [formData, setFormData] = useState({
     email: "",
-    studentId: "",
+    username: "",
     password: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Redirect after successful login
   useEffect(() => {
     if (isAuthenticated && token && role !== null) {
       const numericRole = Number(role);
@@ -71,8 +70,7 @@ export default function LoginPage() {
 
     try {
       const credentials = {
-        identifier:
-          loginType === "student" ? formData.studentId : formData.email,
+        identifier: loginType === "student" ? formData.username : formData.email,
         password: formData.password,
       };
 
@@ -113,41 +111,29 @@ export default function LoginPage() {
                 className="mb-6"
               >
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger
-                    value="student"
-                    className="flex items-center gap-1"
-                  >
-                    <GraduationCap className="w-4 h-4" />
-                    Student
+                  <TabsTrigger value="student" className="flex items-center gap-1">
+                    <GraduationCap className="w-4 h-4" /> Student
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="teacher"
-                    className="flex items-center gap-1"
-                  >
-                    <User className="w-4 h-4" />
-                    Teacher
+                  <TabsTrigger value="teacher" className="flex items-center gap-1">
+                    <User className="w-4 h-4" /> Teacher
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="admin"
-                    className="flex items-center gap-1"
-                  >
-                    <Shield className="w-4 h-4" />
-                    Admin
+                  <TabsTrigger value="admin" className="flex items-center gap-1">
+                    <Shield className="w-4 h-4" /> Admin
                   </TabsTrigger>
                 </TabsList>
 
                 <form onSubmit={handleSubmit} className="space-y-4 mt-6">
                   {loginType === "student" ? (
                     <div>
-                      <Label htmlFor="studentId">Student ID</Label>
+                      <Label htmlFor="username">Username</Label>
                       <div className="relative">
                         <Input
-                          id="studentId"
-                          name="studentId"
-                          value={formData.studentId}
+                          id="username"
+                          name="username"
+                          value={formData.username}
                           onChange={handleChange}
                           required
-                          placeholder="Enter your Student ID"
+                          placeholder="Enter your username"
                           className="pl-10"
                           autoComplete="off"
                         />
@@ -194,11 +180,7 @@ export default function LoginPage() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
                       >
-                        {showPassword ? (
-                          <EyeOff className="w-4 h-4" />
-                        ) : (
-                          <Eye className="w-4 h-4" />
-                        )}
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
