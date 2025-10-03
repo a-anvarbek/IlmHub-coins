@@ -30,12 +30,18 @@ export default function Header() {
 
   const roleRoutes = { 0: ROUTES.ADMIN, 1: ROUTES.TEACHER, 2: ROUTES.STUDENT };
 
-  // Navigatsiya itemlari
-  const navItems = [
-    { key: ROUTES.ABOUT, label: t("nav.about") },
-    { key: ROUTES.FEATURES, label: t("nav.features") },
-    { key: ROUTES.CONTACT, label: t("nav.contact") },
-  ];
+  const navItems =
+    location.pathname === ROUTES.TEACHER
+      ? [{ key: ROUTES.HOME, label: "IlmHub", isLogo: true }]
+      : role === 0
+      ? [{ key: ROUTES.HOME, label: "IlmHub", isLogo: true }]
+      : [
+          { key: ROUTES.HOME, label: "IlmHub", isLogo: true },
+          { key: ROUTES.ABOUT, label: t("nav.about") },
+          { key: ROUTES.FEATURES, label: t("nav.features") },
+          { key: ROUTES.SHOP, label: t("nav.shop") },
+          { key: ROUTES.CONTACT, label: t("nav.contact") },
+        ];
 
   const handleLogout = () => {
     dispatch(logout());
