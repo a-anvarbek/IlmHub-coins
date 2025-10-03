@@ -30,26 +30,33 @@ const REWARD_ITEM_API_PREFIX = "/api/reward-items";
 const STUDENT_API_PREFIX = "/api/students";
 const TRANSACTION_API_PREFIX = "/api/students";
 const USER_API_PREFIX = "/api/users";
+const REDEMPTION_API_PREFIX = "/api/redemptions";
 
 // ===== Auth API =====
 export const authApi = {
   register: (data) => axios.post(`${AUTH_API_PREFIX}/register`, data),
   login: (data) => axios.post(`${AUTH_API_PREFIX}/login`, data),
   getConfirmation: () => axios.get(`${AUTH_API_PREFIX}/confirm-email`),
-  resendConfirmation: (data) => axios.post(`${AUTH_API_PREFIX}/resend-confirmation`, data),
+  resendConfirmation: (data) =>
+    axios.post(`${AUTH_API_PREFIX}/resend-confirmation`, data),
   me: () => axios.get(`${AUTH_API_PREFIX}/me`),
-  forgotPassword: (data) => axios.post(`${AUTH_API_PREFIX}/forgot-password`, data),
-  resetPassword: (data) => axios.post(`${AUTH_API_PREFIX}/reset-password`, data),
+  forgotPassword: (data) =>
+    axios.post(`${AUTH_API_PREFIX}/forgot-password`, data),
+  resetPassword: (data) =>
+    axios.post(`${AUTH_API_PREFIX}/reset-password`, data),
 };
 
 // ===== Group API =====
 export const groupApi = {
   getGroupAll: () => axios.get(`${GROUP_API_PREFIX}/get-all`),
-  getGroupById: (groupId) => axios.get(`${GROUP_API_PREFIX}/get-by-id/${groupId}`),
-  getGroupByName: (groupName) => axios.get(`${GROUP_API_PREFIX}/get-by-name/${groupName}`),
+  getGroupById: (groupId) =>
+    axios.get(`${GROUP_API_PREFIX}/get-by-id/${groupId}`),
+  getGroupByName: (groupName) =>
+    axios.get(`${GROUP_API_PREFIX}/get-by-name/${groupName}`),
   getMyGroups: () => axios.get(`${GROUP_API_PREFIX}/my-groups`),
   postGroup: (data) => axios.post(`${GROUP_API_PREFIX}/create`, data),
-  putGroup: (groupId) => axios.put(`${GROUP_API_PREFIX}/${groupId}/change-teacher`),
+  putGroup: (groupId) =>
+    axios.put(`${GROUP_API_PREFIX}/${groupId}/change-teacher`),
 };
 
 // ===== Reward Item API =====
@@ -66,22 +73,37 @@ export const studentApi = {
   getStudent: () => axios.get(`${STUDENT_API_PREFIX}`),
   getStudentById: (id) => axios.get(`${STUDENT_API_PREFIX}/${id}`),
   deleteStudent: (id) => axios.delete(`${STUDENT_API_PREFIX}/${id}`),
-  getStudentByCode: (code) => axios.get(`${STUDENT_API_PREFIX}/by-code/${code}`),
-  postStudentByIdAndGroupId: (data, id, groupId) => axios.post(`${STUDENT_API_PREFIX}/${id}/groups/${groupId}`, data),
+  getStudentByCode: (code) =>
+    axios.get(`${STUDENT_API_PREFIX}/by-code/${code}`),
+  postStudentByIdAndGroupId: (data, id, groupId) =>
+    axios.post(`${STUDENT_API_PREFIX}/${id}/groups/${groupId}`, data),
 };
 
 // ===== Transaction API =====
 export const transactionApi = {
-  postTransaction: (studentId, data) => axios.post(`${TRANSACTION_API_PREFIX}/${studentId}/transactions`, data),
-  getTransactions: (studentId) => axios.get(`${TRANSACTION_API_PREFIX}/${studentId}/transactions`),
+  postTransaction: (studentId, data) =>
+    axios.post(`${TRANSACTION_API_PREFIX}/${studentId}/transactions`, data),
+  getTransactions: (studentId) =>
+    axios.get(`${TRANSACTION_API_PREFIX}/${studentId}/transactions`),
 };
 
 // ===== User API =====
 export const userApi = {
   getTeacher: () => axios.get(`${USER_API_PREFIX}/teachers`),
   getUser: () => axios.get(`${USER_API_PREFIX}/users`),
-  getUserByEmail: (email) => axios.get(`${USER_API_PREFIX}/get-by-email/${email}`),
+  getUserByEmail: (email) =>
+    axios.get(`${USER_API_PREFIX}/get-by-email/${email}`),
   getUserById: (id) => axios.get(`${USER_API_PREFIX}/get-by-id/${id}`),
   postUser: (data, id) => axios.post(`${USER_API_PREFIX}/${id}/promote`, data),
   deleteUser: (id) => axios.delete(`${USER_API_PREFIX}/${id}`),
+};
+
+// ===== Redemption API =====
+export const redemptionApi = {
+  postRedemption: (data) => axios.post(`${REDEMPTION_API_PREFIX}`, data),
+  getRedemption: () => axios.get(`${REDEMPTION_API_PREFIX}`),
+  getRedemptionByStudentId: (studentId) =>
+    axios.get(`${REDEMPTION_API_PREFIX}/students/${studentId}`),
+  putRedemption: (redemptionId) =>
+    axios.put(`${REDEMPTION_API_PREFIX}/${redemptionId}/status`),
 };
