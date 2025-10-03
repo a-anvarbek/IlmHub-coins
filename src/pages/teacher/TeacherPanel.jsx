@@ -10,7 +10,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { logout, selectAuth } from "../../utils/redux/authSlice";
 import { toast } from "sonner";
 
@@ -29,7 +29,7 @@ import { Badge } from "../../components/ui/badge";
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
-import OverviewTab from "./OverviewTab";
+// import OverviewTab from "./OverviewTab";
 
 const tabs = [
   {

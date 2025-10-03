@@ -44,7 +44,7 @@ import {
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { selectAuth, logout } from "../../utils/redux/authSlice";
 
 export default function AdminPanel() {
