@@ -1,5 +1,5 @@
 // Libraries
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Users,
   Coins,
@@ -11,7 +11,8 @@ import {
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { logout, selectAuth } from "../../utils/redux/authSlice";
+import { logout, selectAuth, getMeAsync } from "../../utils/redux/authSlice";
+import { getMyGroupsAsync, selectGroup } from "../../utils/redux/groupSlice";
 import { toast } from "sonner";
 
 // Components
@@ -57,7 +58,8 @@ const tabs = [
 
 export default function TeacherPanel() {
   const { t } = useLanguage();
-  const { students = [], user, token, role } = useSelector(selectAuth);
+  const { students = [], user, token, role, groups = [] } = useSelector(selectAuth);
+  const { groupList = [] } = useSelector(selectGroup);
 
   const [activeTab, setActiveTab] = useState("overview");
   const [studentForm, setStudentForm] = useState({ name: "" });
@@ -75,6 +77,17 @@ export default function TeacherPanel() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(getMyGroupsAsync());
+  }, [dispatch]);
+
+  // Fetch teacher info if not present
+  useEffect(() => {
+    if (!user) {
+      dispatch(getMeAsync());
+    }
+  }, [user, dispatch]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -132,11 +145,15 @@ export default function TeacherPanel() {
           {/* Header */}
           <div className="mb-8 flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold mb-2">{t("teacher.title")}</h1>
-              <p className="text-muted-foreground">
-                Welcome back, {user?.name}! Manage your students and reward their
-                achievements.
-              </p>
+              <h1 className="text-4xl font-bold mb-2">Teacher Panel</h1>
+              <div className="text-lg text-muted-foreground space-y-1">
+                <p>
+                  <span className="font-semibold">Teacher Name:</span> {user?.fullName || "Unknown Teacher"}
+                </p>
+                <p>
+                  <span className="font-semibold">Teacher Email:</span> {user?.email || "No Email"}
+                </p>
+              </div>
             </div>
             <Button variant="outline" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />
@@ -171,56 +188,10 @@ export default function TeacherPanel() {
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">
-                          Total Students
-                        </p>
-                        <p className="text-2xl font-bold">{students.length}</p>
+                        <p className="text-sm text-muted-foreground">Total Groups</p>
+                        <p className="text-2xl font-bold">{groupList?.length || 0}</p>
                       </div>
-                      <GraduationCap className="w-8 h-8 text-blue-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Total Coins Distributed
-                        </p>
-                        <p className="text-2xl font-bold">{totalCoins}</p>
-                      </div>
-                      <DollarSign className="w-8 h-8 text-yellow-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Average Coins
-                        </p>
-                        <p className="text-2xl font-bold">{averageCoins}</p>
-                      </div>
-                      <BarChart3 className="w-8 h-8 text-green-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Top Performer
-                        </p>
-                        <p className="text-lg font-bold">
-                          {topStudent?.name || "N/A"}
-                        </p>
-                      </div>
-                      <Gift className="w-8 h-8 text-purple-500" />
+                      <Users className="w-8 h-8 text-blue-500" />
                     </div>
                   </CardContent>
                 </Card>
