@@ -16,7 +16,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogDescription,
 } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
@@ -26,6 +25,7 @@ import {
   getStudentTransactionsAsync,
   selectTransaction,
 } from "../../utils/redux/transactionSlice";
+import SecondDialog from "./SecondDialog";
 
 function GroupsTab() {
   const dispatch = useDispatch();
@@ -129,73 +129,25 @@ function GroupsTab() {
                 <TableCell>{group.name}</TableCell>
                 <TableCell>{group.description}</TableCell>
                 <TableCell className="text-center">
-                  <Dialog
-                    open={addStudentDialogOpenGroupId === group.id}
-                    onOpenChange={(open) =>
-                      setAddStudentDialogOpenGroupId(open ? group.id : null)
-                    }
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setAddStudentDialogOpenGroupId(group.id);
+                      setNewStudent((prev) => ({ ...prev, groupId: group.id }));
+                    }}
                   >
-                    <DialogTrigger asChild>
-                      <Button
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        + Add Student
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-[400px]">
-                      <DialogHeader>
-                        <DialogTitle>Add Student to {group.name}</DialogTitle>
-                        <DialogDescription>
-                          Fill in the details below to add a new student to this group.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <form
-                        onSubmit={handleAddStudentSubmit}
-                        className="space-y-4"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Input
-                          required
-                          placeholder="First Name"
-                          value={newStudent.firstName}
-                          onChange={(e) =>
-                            setNewStudent((prev) => ({
-                              ...prev,
-                              firstName: e.target.value,
-                              groupId: group.id,
-                            }))
-                          }
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                        <Input
-                          required
-                          placeholder="Last Name"
-                          value={newStudent.lastName}
-                          onChange={(e) =>
-                            setNewStudent((prev) => ({
-                              ...prev,
-                              lastName: e.target.value,
-                              groupId: group.id,
-                            }))
-                          }
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                        <Input
-                          placeholder="Info"
-                          value={newStudent.info}
-                          onChange={(e) =>
-                            setNewStudent((prev) => ({
-                              ...prev,
-                              info: e.target.value,
-                              groupId: group.id,
-                            }))
-                          }
-                          onClick={(e) => e.stopPropagation()}
-                        />
-                        <Button type="submit">Add Student</Button>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
+                    + Add Student
+                  </Button>
+                  <SecondDialog
+                    open={addStudentDialogOpenGroupId === group.id}
+                    onOpenChange={(open) => setAddStudentDialogOpenGroupId(open ? group.id : null)}
+                    groupName={group.name}
+                    newStudent={newStudent}
+                    setNewStudent={setNewStudent}
+                    handleSubmit={handleAddStudentSubmit}
+                  />
                 </TableCell>
               </TableRow>
             ))}
