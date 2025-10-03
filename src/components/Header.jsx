@@ -25,22 +25,17 @@ export default function Header() {
   const { isDark, toggleTheme } = useTheme();
   const dispatch = useDispatch();
   const { token, role, isAuthenticated } = useSelector(selectAuth);
-  
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const roleRoutes = { 0: ROUTES.ADMIN, 1: ROUTES.TEACHER, 2: ROUTES.STUDENT };
 
-  const navItems =
-    location.pathname === ROUTES.TEACHER
-      ? [{ key: ROUTES.HOME, label: "IlmHub", isLogo: true }]
-      : role === 0
-      ? [{ key: ROUTES.HOME, label: "IlmHub", isLogo: true }]
-      : [
-          { key: ROUTES.HOME, label: "IlmHub", isLogo: true },
-          { key: ROUTES.ABOUT, label: t("nav.about") },
-          { key: ROUTES.FEATURES, label: t("nav.features") },
-          { key: ROUTES.CONTACT, label: t("nav.contact") },
-        ];
+  // Navigatsiya itemlari
+  const navItems = [
+    { key: ROUTES.ABOUT, label: t("nav.about") },
+    { key: ROUTES.FEATURES, label: t("nav.features") },
+    { key: ROUTES.CONTACT, label: t("nav.contact") },
+  ];
 
   const handleLogout = () => {
     dispatch(logout());
@@ -64,11 +59,15 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {navItems.slice(1).map((item) => (
+            {navItems.map((item) => (
               <button
                 key={item.key}
                 onClick={() => navigate(item.key)}
-                className={`hover:text-blue-500 transition-colors`}
+                className={`hover:text-blue-500 transition-colors ${
+                  location.pathname === item.key
+                    ? "text-blue-500 font-semibold"
+                    : ""
+                }`}
               >
                 {item.label}
               </button>
@@ -146,7 +145,7 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden mt-4 p-4 bg-background/95 backdrop-blur-sm rounded-lg border border-border">
             <nav className="flex flex-col gap-4">
-              {navItems.slice(1).map((item) => (
+              {navItems.map((item) => (
                 <button
                   key={item.key}
                   onClick={() => {
