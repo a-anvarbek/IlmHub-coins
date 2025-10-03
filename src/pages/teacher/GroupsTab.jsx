@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
 import { postStudentAsync } from "../../utils/redux/studentSlice";
@@ -141,9 +142,12 @@ function GroupsTab() {
                         + Add Student
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="max-w-[400px]">
                       <DialogHeader>
                         <DialogTitle>Add Student to {group.name}</DialogTitle>
+                        <DialogDescription>
+                          Fill in the details below to add a new student to this group.
+                        </DialogDescription>
                       </DialogHeader>
                       <form
                         onSubmit={handleAddStudentSubmit}
