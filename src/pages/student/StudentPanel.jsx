@@ -1,4 +1,4 @@
-// Libraries
+// StudentPanel.jsx
 import { useState, useEffect } from "react";
 import {
   Coins,
@@ -42,6 +42,7 @@ export default function StudentPanel() {
 
   const [modalItem, setModalItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     if (!user) {
@@ -64,15 +65,6 @@ export default function StudentPanel() {
 
   const performance = getPerformanceLevel(coins);
 
-  const Crown = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="m2 20 7-7" />
-      <path d="m15 9 7 7" />
-      <path d="m6 3 1 3 6-3 6 3 1-3" />
-      <path d="m6 9 4-4 4 4" />
-    </svg>
-  );
-
   const openBuyModal = (item) => {
     if (coins < item.cost) {
       toast.error("Not enough coins to purchase this item");
@@ -87,16 +79,25 @@ export default function StudentPanel() {
     setQuantity(1);
   };
 
-  const handleConfirmPurchase = () => {
+  const handleConfirmPurchase = async () => {
     if (!modalItem) return;
     if (quantity < 1 || quantity > modalItem.stock) {
       toast.error("Invalid quantity selected");
       return;
     }
-    dispatch(postRedemptionAsync({ data: { rewardItemId: modalItem.id, quantity } }));
-    toast.success(`Successfully purchased ${modalItem.title} x${quantity}!`);
+
+    // API chaqirish
+    await dispatch(postRedemptionAsync({ data: { rewardItemId: modalItem.id, quantity } }));
+
     closeBuyModal();
+
+    // Success modalni chiqarish
+    setSuccessMessage(
+      "Siz ushbu mahsulotni sotib oldingiz va admin ushbu so‘rovni ko‘rib chiqqandan so‘ng habar beradi!"
+    );
   };
+
+  const handleCloseSuccess = () => setSuccessMessage("");
 
   return (
     <div className="min-h-screen pt-20 bg-background">
@@ -179,7 +180,7 @@ export default function StudentPanel() {
             </div>
           )}
 
-          {/* Fullscreen Buy Modal */}
+          {/* Buy Modal */}
           {modalItem && (
             <div
               className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center overflow-auto"
@@ -205,13 +206,9 @@ export default function StudentPanel() {
                     autoFocus
                     onChange={(e) => {
                       const val = Number(e.target.value);
-                      if (val >= 1 && val <= modalItem.stock) {
-                        setQuantity(val);
-                      } else if (val < 1) {
-                        setQuantity(1);
-                      } else if (val > modalItem.stock) {
-                        setQuantity(modalItem.stock);
-                      }
+                      if (val >= 1 && val <= modalItem.stock) setQuantity(val);
+                      else if (val < 1) setQuantity(1);
+                      else if (val > modalItem.stock) setQuantity(modalItem.stock);
                     }}
                     className="w-full border border-gray-300 rounded px-3 py-2"
                   />
@@ -223,6 +220,17 @@ export default function StudentPanel() {
               </div>
             </div>
           )}
+
+          {/* Success Modal */}
+          {successMessage && (
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 p-4">
+              <div className="bg-green-500 text-white rounded-lg shadow-lg p-6 max-w-sm w-full text-center">
+                <p className="mb-4">{successMessage}</p>
+                <Button variant="outline" onClick={handleCloseSuccess}>OK</Button>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </div>
