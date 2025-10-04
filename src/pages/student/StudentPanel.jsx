@@ -18,7 +18,6 @@ import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Alert, AlertDescription } from "../../components/ui/alert";
 import OverviewTab from "./OverviewTab";
-import { InputNumber, Modal } from "antd";
 
 // Redux
 import { getMeAsync, selectAuth } from "../../utils/redux/authSlice";
@@ -40,6 +39,9 @@ export default function StudentPanel() {
   const coins = user?.coins ?? user?.balance ?? 0;
 
   const { rewardItemList } = useSelector(selectRewardItem);
+
+  const [modalItem, setModalItem] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (!user) {
@@ -71,26 +73,29 @@ export default function StudentPanel() {
     </svg>
   );
 
-  const handleBuyItem = (item) => {
+  const openBuyModal = (item) => {
     if (coins < item.cost) {
       toast.error("Not enough coins to purchase this item");
       return;
     }
+    setQuantity(1);
+    setModalItem(item);
+  };
 
-    let quantity = 1;
-    Modal.confirm({
-      title: `Buy ${item.title}`,
-      content: (
-        <div>
-          <p>Enter quantity:</p>
-          <InputNumber min={1} max={item.stock} defaultValue={1} onChange={(value) => (quantity = value)} />
-        </div>
-      ),
-      onOk: () => {
-        dispatch(postRedemptionAsync({ data: { rewardItemId: item.id, quantity } }));
-        toast.success(`Successfully purchased ${item.title} x${quantity}!`);
-      },
-    });
+  const closeBuyModal = () => {
+    setModalItem(null);
+    setQuantity(1);
+  };
+
+  const handleConfirmPurchase = () => {
+    if (!modalItem) return;
+    if (quantity < 1 || quantity > modalItem.stock) {
+      toast.error("Invalid quantity selected");
+      return;
+    }
+    dispatch(postRedemptionAsync({ data: { rewardItemId: modalItem.id, quantity } }));
+    toast.success(`Successfully purchased ${modalItem.title} x${quantity}!`);
+    closeBuyModal();
   };
 
   return (
@@ -158,7 +163,7 @@ export default function StudentPanel() {
                           <Badge variant={canBuy ? "secondary" : "outline"}>{item.cost} coins</Badge>
                         </div>
                         <p className="mb-4 text-sm text-muted-foreground">{item.description ?? "No description available"}</p>
-                        <Button disabled={!canBuy} onClick={() => handleBuyItem(item)} className="w-full">
+                        <Button disabled={!canBuy} onClick={() => openBuyModal(item)} className="w-full">
                           {canBuy ? "Buy" : "Insufficient Coins"}
                         </Button>
                       </CardContent>
@@ -171,6 +176,51 @@ export default function StudentPanel() {
                   <AlertDescription>No items available in the shop.</AlertDescription>
                 </Alert>
               )}
+            </div>
+          )}
+
+          {/* Fullscreen Buy Modal */}
+          {modalItem && (
+            <div
+              className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center overflow-auto"
+              onClick={closeBuyModal}
+              role="dialog"
+              aria-modal="true"
+            >
+              <div
+                className="relative z-10 bg-white rounded-lg shadow-lg max-w-md w-full p-6 mx-4 my-20 min-h-[300px]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h2 className="text-xl font-semibold mb-4">Buy {modalItem.title}</h2>
+                <div className="mb-4">
+                  <label htmlFor="quantity" className="block mb-1 font-medium">
+                    Enter quantity (max {modalItem.stock}):
+                  </label>
+                  <input
+                    id="quantity"
+                    type="number"
+                    min={1}
+                    max={modalItem.stock}
+                    value={quantity}
+                    autoFocus
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val >= 1 && val <= modalItem.stock) {
+                        setQuantity(val);
+                      } else if (val < 1) {
+                        setQuantity(1);
+                      } else if (val > modalItem.stock) {
+                        setQuantity(modalItem.stock);
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded px-3 py-2"
+                  />
+                </div>
+                <div className="flex justify-end gap-3">
+                  <Button variant="outline" onClick={closeBuyModal}>Cancel</Button>
+                  <Button onClick={handleConfirmPurchase}>Confirm Purchase</Button>
+                </div>
+              </div>
             </div>
           )}
         </div>

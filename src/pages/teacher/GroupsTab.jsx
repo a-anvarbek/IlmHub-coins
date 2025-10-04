@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogOverlay,
 } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
 import { postStudentAsync } from "../../utils/redux/studentSlice";
@@ -32,33 +33,52 @@ function GroupsTab() {
   const { groupList, status, error } = useSelector(selectGroup);
   const { transactionList } = useSelector(selectTransaction);
 
+  const [activeGroupForStudents, setActiveGroupForStudents] = useState(null);
+  const [activeGroupForAddStudent, setActiveGroupForAddStudent] = useState(null);
   const [newStudent, setNewStudent] = useState({
     firstName: "",
     lastName: "",
     info: "",
-    groupId: "",
   });
 
-  const [giveCoinDialogOpenStudentId, setGiveCoinDialogOpenStudentId] = useState(null);
+  const [activeStudentForGiveCoin, setActiveStudentForGiveCoin] = useState(null);
   const [giveCoinData, setGiveCoinData] = useState({ amount: "", reason: "" });
-
-  const [studentListDialogOpenGroupId, setStudentListDialogOpenGroupId] = useState(null);
-  const [showAddStudentForm, setShowAddStudentForm] = useState(false);
 
   useEffect(() => {
     dispatch(getMyGroupsAsync());
   }, [dispatch]);
 
-  const handleAddStudentSubmit = (e) => {
-    e.preventDefault();
-    if (!newStudent.groupId) return;
-    dispatch(postStudentAsync({ ...newStudent, groupIds: [newStudent.groupId] }));
-    setNewStudent({ firstName: "", lastName: "", info: "", groupId: "" });
-    setShowAddStudentForm(false);
+  useEffect(() => {
+    if (activeGroupForStudents) {
+      const group = groupList.find((g) => g.id === activeGroupForStudents);
+      group?.students?.forEach((student) => {
+        dispatch(getStudentTransactionsAsync(student.id));
+      });
+    }
+  }, [activeGroupForStudents, groupList, dispatch]);
+
+  const refreshGroupsAndStudents = async (groupId) => {
+    await dispatch(getMyGroupsAsync());
+    setActiveGroupForStudents(groupId);
   };
 
-  const handleGiveCoinSubmit = (e, studentId) => {
+  const handleAddStudentSubmit = async (e) => {
     e.preventDefault();
+    if (!activeGroupForAddStudent) return;
+    await dispatch(
+      postStudentAsync({
+        ...newStudent,
+        groupIds: [activeGroupForAddStudent],
+      })
+    );
+    setNewStudent({ firstName: "", lastName: "", info: "" });
+    setActiveGroupForAddStudent(null);
+    refreshGroupsAndStudents(activeGroupForAddStudent);
+  };
+
+  const handleGiveCoinSubmit = async (e) => {
+    e.preventDefault();
+    if (!activeStudentForGiveCoin) return;
     if (!giveCoinData.amount || !giveCoinData.reason) return;
 
     const referenceId = `${giveCoinData.amount}${giveCoinData.reason}`;
@@ -68,21 +88,21 @@ function GroupsTab() {
       referenceId,
     };
 
-    dispatch(postTransactionAsync({ studentId, data: transactionPayload })).then(() => {
-      dispatch(getStudentTransactionsAsync(studentId));
-    });
+    await dispatch(
+      postTransactionAsync({
+        studentId: activeStudentForGiveCoin.id,
+        data: transactionPayload,
+      })
+    );
+    await dispatch(getStudentTransactionsAsync(activeStudentForGiveCoin.id));
 
-    setGiveCoinDialogOpenStudentId(null);
     setGiveCoinData({ amount: "", reason: "" });
+    const currentGroupId = activeGroupForStudents;
+    setActiveStudentForGiveCoin(null);
+    if (currentGroupId) {
+      refreshGroupsAndStudents(currentGroupId);
+    }
   };
-
-  useEffect(() => {
-    groupList.forEach((group) => {
-      group.students?.forEach((student) => {
-        dispatch(getStudentTransactionsAsync(student.id));
-      });
-    });
-  }, [groupList, dispatch]);
 
   return (
     <Card>
@@ -107,7 +127,7 @@ function GroupsTab() {
               <TableRow
                 key={group.id}
                 className="cursor-pointer"
-                onClick={() => setStudentListDialogOpenGroupId(group.id)}
+                onClick={() => setActiveGroupForStudents(group.id)}
               >
                 <TableCell>{group.name}</TableCell>
                 <TableCell>{group.description}</TableCell>
@@ -117,8 +137,8 @@ function GroupsTab() {
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setStudentListDialogOpenGroupId(group.id);
-                      setNewStudent((prev) => ({ ...prev, groupId: group.id }));
+                      setActiveGroupForAddStudent(group.id);
+                      setNewStudent({ firstName: "", lastName: "", info: "" });
                     }}
                   >
                     + Add Student
@@ -129,181 +149,170 @@ function GroupsTab() {
           </TableBody>
         </Table>
 
-        {studentListDialogOpenGroupId && (
-          <Dialog
-            open={true}
-            onOpenChange={(open) =>
-              setStudentListDialogOpenGroupId(open ? studentListDialogOpenGroupId : null)
-            }
-          >
-            <DialogContent className="max-w-4xl w-full max-h-[80vh] flex flex-col overflow-hidden">
-              <DialogHeader>
-                <DialogTitle className="text-center text-xl font-bold">
-                  {groupList.find((g) => g.id === studentListDialogOpenGroupId)?.name || ""}
-                </DialogTitle>
-              </DialogHeader>
+        {/* Students List Dialog */}
+        <Dialog
+          open={!!activeGroupForStudents}
+          onOpenChange={(open) => {
+            if (!open) setActiveGroupForStudents(null);
+          }}
+        >
+          <DialogOverlay />
+          <DialogContent className="max-w-4xl w-full max-h-[80vh] flex flex-col overflow-hidden">
+            <DialogHeader>
+              <DialogTitle className="text-center text-xl font-bold">
+                {groupList.find((g) => g.id === activeGroupForStudents)?.name || ""}
+              </DialogTitle>
+            </DialogHeader>
 
-              {groupList.find((g) => g.id === studentListDialogOpenGroupId)?.students?.length > 0 ? (
-                <>
-                  {/* SCROLL faqat jadvalga */}
-                  <div className="flex-1 overflow-y-auto mt-4 border rounded max-h-[400px]">
-                    <Table className="min-w-full">
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>First Name</TableHead>
-                          <TableHead>Last Name</TableHead>
-                          <TableHead>Username</TableHead>
-                          <TableHead>Student Code</TableHead>
-                          <TableHead>Balance</TableHead>
-                          <TableHead className="text-center">Actions</TableHead>
+            {groupList.find((g) => g.id === activeGroupForStudents)?.students?.length > 0 ? (
+              <div className="flex-1 overflow-y-auto mt-4 border rounded max-h-[400px]">
+                <Table className="min-w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>First Name</TableHead>
+                      <TableHead>Last Name</TableHead>
+                      <TableHead>Username</TableHead>
+                      <TableHead>Student Code</TableHead>
+                      <TableHead>Balance</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {groupList
+                      .find((g) => g.id === activeGroupForStudents)
+                      .students.map((student) => (
+                        <TableRow key={student.id}>
+                          <TableCell>{student.firstName}</TableCell>
+                          <TableCell>{student.lastName}</TableCell>
+                          <TableCell>{student.username ?? "-"}</TableCell>
+                          <TableCell>{student.studentCode ?? "-"}</TableCell>
+                          <TableCell>{student.balance}</TableCell>
+                          <TableCell className="text-center">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveStudentForGiveCoin(student);
+                                setGiveCoinData({ amount: "", reason: "" });
+                              }}
+                            >
+                              Give Coin
+                            </Button>
+                          </TableCell>
                         </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {groupList
-                          .find((g) => g.id === studentListDialogOpenGroupId)
-                          .students.map((student) => (
-                            <TableRow key={student.id}>
-                              <TableCell>{student.firstName}</TableCell>
-                              <TableCell>{student.lastName}</TableCell>
-                              <TableCell>{student.username ?? "-"}</TableCell>
-                              <TableCell>{student.studentCode ?? "-"}</TableCell>
-                              <TableCell>{student.balance}</TableCell>
-                              <TableCell className="text-center">
-                                <Dialog
-                                  open={giveCoinDialogOpenStudentId === student.id}
-                                  onOpenChange={(open) => {
-                                    if (open) {
-                                      setGiveCoinDialogOpenStudentId(student.id);
-                                      setGiveCoinData({ amount: "", reason: "" });
-                                    } else {
-                                      setGiveCoinDialogOpenStudentId(null);
-                                    }
-                                  }}
-                                >
-                                  <DialogTrigger asChild>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      Give Coin
-                                    </Button>
-                                  </DialogTrigger>
-                                  <DialogContent className="w-[700px]">
-                                    <DialogHeader>
-                                      <DialogTitle>
-                                        Give Coin to {student.firstName} {student.lastName}
-                                      </DialogTitle>
-                                    </DialogHeader>
-                                    <form
-                                      onSubmit={(e) => handleGiveCoinSubmit(e, student.id)}
-                                      className="space-y-4"
-                                    >
-                                      <Input
-                                        required
-                                        type="number"
-                                        min="1"
-                                        placeholder="Amount"
-                                        value={giveCoinData.amount}
-                                        onChange={(e) =>
-                                          setGiveCoinData((prev) => ({
-                                            ...prev,
-                                            amount: e.target.value,
-                                          }))
-                                        }
-                                      />
-                                      <Input
-                                        required
-                                        placeholder="Reason"
-                                        value={giveCoinData.reason}
-                                        onChange={(e) =>
-                                          setGiveCoinData((prev) => ({
-                                            ...prev,
-                                            reason: e.target.value,
-                                          }))
-                                        }
-                                      />
-                                      <Button type="submit">Give Coin</Button>
-                                    </form>
-                                  </DialogContent>
-                                </Dialog>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                      ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <p className="mt-4">No students in this group.</p>
+            )}
+          </DialogContent>
+        </Dialog>
 
-                  <div className="mt-4 flex-shrink-0">
-                    {/* FORM jadval tashqarisida turadi */}
-                    {showAddStudentForm && (
-                      <form onSubmit={handleAddStudentSubmit} className="mt-6 space-y-4">
-                        <h3 className="text-lg font-semibold">Add New Student</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <Input
-                            required
-                            placeholder="First Name"
-                            value={newStudent.firstName}
-                            onChange={(e) =>
-                              setNewStudent((prev) => ({
-                                ...prev,
-                                firstName: e.target.value,
-                                groupId: studentListDialogOpenGroupId,
-                              }))
-                            }
-                          />
-                          <Input
-                            required
-                            placeholder="Last Name"
-                            value={newStudent.lastName}
-                            onChange={(e) =>
-                              setNewStudent((prev) => ({
-                                ...prev,
-                                lastName: e.target.value,
-                                groupId: studentListDialogOpenGroupId,
-                              }))
-                            }
-                          />
-                          <Input
-                            placeholder="Info"
-                            value={newStudent.info}
-                            onChange={(e) =>
-                              setNewStudent((prev) => ({
-                                ...prev,
-                                info: e.target.value,
-                                groupId: studentListDialogOpenGroupId,
-                              }))
-                            }
-                          />
-                        </div>
-                        <Button type="submit">+ Add Student</Button>
-                      </form>
-                    )}
+        {/* Add Student Dialog */}
+        <Dialog
+          open={!!activeGroupForAddStudent}
+          onOpenChange={(open) => {
+            if (!open) setActiveGroupForAddStudent(null);
+          }}
+        >
+          <DialogOverlay />
+          <DialogContent className="max-w-md w-full">
+            <DialogHeader>
+              <DialogTitle className="text-center text-xl font-bold">
+                Add Student to{" "}
+                {groupList.find((g) => g.id === activeGroupForAddStudent)?.name || ""}
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleAddStudentSubmit} className="space-y-4 mt-2">
+              <Input
+                required
+                placeholder="First Name"
+                value={newStudent.firstName}
+                onChange={(e) =>
+                  setNewStudent((prev) => ({ ...prev, firstName: e.target.value }))
+                }
+              />
+              <Input
+                required
+                placeholder="Last Name"
+                value={newStudent.lastName}
+                onChange={(e) =>
+                  setNewStudent((prev) => ({ ...prev, lastName: e.target.value }))
+                }
+              />
+              <Input
+                placeholder="Info"
+                value={newStudent.info}
+                onChange={(e) =>
+                  setNewStudent((prev) => ({ ...prev, info: e.target.value }))
+                }
+              />
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setActiveGroupForAddStudent(null)}
+                  type="button"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">+ Add Student</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
 
-                    <div className="mt-4 flex justify-center">
-                      {showAddStudentForm ? (
-                        <Button
-                          onClick={() => setShowAddStudentForm(false)}
-                          size="sm"
-                          variant="outline"
-                        >
-                          Cancel
-                        </Button>
-                      ) : (
-                        <Button onClick={() => setShowAddStudentForm(true)} size="sm">
-                          Add Student
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                  
-                </>
-              ) : (
-                <p className="mt-4">No students in this group.</p>
-              )}
-            </DialogContent>
-          </Dialog>
-        )}
+        {/* Give Coin Dialog */}
+        <Dialog
+          open={!!activeStudentForGiveCoin}
+          onOpenChange={(open) => {
+            if (!open) setActiveStudentForGiveCoin(null);
+          }}
+        >
+          <DialogOverlay />
+          <DialogContent className="max-w-md w-full">
+            <DialogHeader>
+              <DialogTitle className="text-center text-xl font-bold">
+                Give Coin to{" "}
+                {activeStudentForGiveCoin
+                  ? `${activeStudentForGiveCoin.firstName} ${activeStudentForGiveCoin.lastName}`
+                  : ""}
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleGiveCoinSubmit} className="space-y-4 mt-2">
+              <Input
+                required
+                type="number"
+                min="1"
+                placeholder="Amount"
+                value={giveCoinData.amount}
+                onChange={(e) =>
+                  setGiveCoinData((prev) => ({ ...prev, amount: e.target.value }))
+                }
+              />
+              <Input
+                required
+                placeholder="Reason"
+                value={giveCoinData.reason}
+                onChange={(e) =>
+                  setGiveCoinData((prev) => ({ ...prev, reason: e.target.value }))
+                }
+              />
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setActiveStudentForGiveCoin(null)}
+                  type="button"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">Give Coin</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
