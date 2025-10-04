@@ -14,6 +14,7 @@ const SecondDialog = ({ open, onOpenChange, title, children }) => {
           className={cn(
             "fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out"
           )}
+          
         />
         <DialogPrimitive.Content
           className={cn(
