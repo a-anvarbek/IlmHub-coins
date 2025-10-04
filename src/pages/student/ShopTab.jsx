@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, Col, Row } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { getItemAsync, selectRewardItem } from "../../redux/rewardItemSlice";
 import { postRedemptionAsync } from "../../redux/redemptionSlice";
+import Card from "../../components/Card";
+import CardContent from "../../components/CardContent";
+import Button from "../../components/Button";
+import Badge from "../../components/Badge";
 
 const ShopTab = ({ user, t }) => {
   const dispatch = useDispatch();
@@ -10,6 +13,7 @@ const ShopTab = ({ user, t }) => {
 
   const [modalItem, setModalItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getItemAsync());
@@ -18,111 +22,98 @@ const ShopTab = ({ user, t }) => {
   const openModal = (item) => {
     setModalItem(item);
     setQuantity(1);
+    setOpen(true);
   };
 
   const handleConfirm = () => {
     if (modalItem) {
       dispatch(postRedemptionAsync({ data: { rewardItemId: modalItem.id, quantity } }));
+      setOpen(false);
       setModalItem(null);
     }
   };
 
   const handleCancel = () => {
+    setOpen(false);
     setModalItem(null);
   };
 
   const canAfford = (item) => user?.coins >= item.cost;
 
   return (
-    <div>
-      <Alert
-        message={
-          <span>
-            {t("Your coin balance")}: <b>{user?.coins ?? 0}</b>
-          </span>
-        }
-        type="info"
-        showIcon
-        style={{ marginBottom: 24 }}
-      />
+    <div className="p-4">
+      <div className="mb-6 p-4 bg-blue-100 border border-blue-300 rounded flex items-center space-x-2">
+        <Badge type="info" />
+        <span>
+          {t("Your coin balance")}: <b>{user?.coins ?? 0}</b>
+        </span>
+      </div>
 
-      <Row gutter={[16, 16]}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {rewardItemList.map((item) => (
-          <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
-            <Card
-              title={item.title}
-              actions={[
-                <Button
-                  type="primary"
-                  disabled={!canAfford(item)}
-                  onClick={() => openModal(item)}
-                  key="buy"
-                >
-                  {canAfford(item) ? `Buy for ${item.cost} coins` : "Insufficient Coins"}
-                </Button>,
-              ]}
-            >
-              <div>{item.description ?? "No description available"}</div>
-              <div style={{ marginTop: 8, fontSize: "small", color: "#888" }}>
-                Stock: {item.stock}
-              </div>
-            </Card>
-          </Col>
+          <Card key={item.id} className="flex flex-col justify-between">
+            <CardContent>
+              <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+              <p className="text-gray-700">{item.description ?? "No description available"}</p>
+              <p className="mt-2 text-sm text-gray-500">Stock: {item.stock}</p>
+            </CardContent>
+            <div className="p-4 pt-0">
+              <Button
+                disabled={!canAfford(item)}
+                onClick={() => openModal(item)}
+                className={`w-full ${!canAfford(item) ? "bg-gray-400 cursor-not-allowed" : ""}`}
+              >
+                {canAfford(item) ? `${t("Buy for")} ${item.cost} ${t("coins")}` : t("Insufficient Coins")}
+              </Button>
+            </div>
+          </Card>
         ))}
-      </Row>
+      </div>
 
-      {modalItem && (
+      {open && (
         <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          aria-modal="true"
+          role="dialog"
           onClick={handleCancel}
         >
           <div
-            style={{
-              backgroundColor: "#fff",
-              padding: 24,
-              borderRadius: 8,
-              minWidth: 300,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-            }}
+            className="bg-white rounded p-6 max-w-md w-full max-h-[80vh] overflow-y-auto shadow-lg z-10"
+            tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3>{modalItem.title}</h3>
-            <p>Enter quantity:</p>
-            <input
-              type="number"
-              min={1}
-              max={modalItem.stock}
-              value={quantity}
-              onChange={(e) => {
-                const val = Number(e.target.value);
-                if (val >= 1 && val <= modalItem.stock) {
-                  setQuantity(val);
-                } else if (val < 1) {
-                  setQuantity(1);
-                } else if (val > modalItem.stock) {
-                  setQuantity(modalItem.stock);
-                }
-              }}
-              style={{ width: "100%", padding: "8px", fontSize: "16px", boxSizing: "border-box" }}
-            />
-            <div style={{ marginTop: 16, textAlign: "right" }}>
-              <Button onClick={handleCancel} style={{ marginRight: 8 }}>
-                Cancel
-              </Button>
-              <Button type="primary" onClick={handleConfirm}>
-                Confirm
-              </Button>
+            <div className="text-xl font-bold">{modalItem?.title}</div>
+            <div className="mt-4">
+              <label htmlFor="quantity" className="block mb-2 font-medium">
+                {t("Enter quantity")}:
+              </label>
+              <input
+                id="quantity"
+                type="number"
+                min={1}
+                max={modalItem?.stock || 1}
+                value={quantity}
+                autoFocus
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  if (val >= 1 && val <= (modalItem?.stock || 1)) {
+                    setQuantity(val);
+                  } else if (val < 1) {
+                    setQuantity(1);
+                  } else if (val > (modalItem?.stock || 1)) {
+                    setQuantity(modalItem?.stock || 1);
+                  }
+                }}
+                className="w-full p-2 border border-gray-300 rounded mb-6 text-lg"
+              />
+              <div className="flex justify-end space-x-3">
+                <Button onClick={handleCancel} className="bg-gray-300 hover:bg-gray-400 text-gray-800">
+                  {t("Cancel")}
+                </Button>
+                <Button type="primary" onClick={handleConfirm}>
+                  {t("Confirm")}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
