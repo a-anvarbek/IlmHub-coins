@@ -14,6 +14,7 @@ const ShopTab = ({ user, t }) => {
   const [modalItem, setModalItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [open, setOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(""); // success popap
 
   useEffect(() => {
     dispatch(getItemAsync());
@@ -25,11 +26,20 @@ const ShopTab = ({ user, t }) => {
     setOpen(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (modalItem) {
-      dispatch(postRedemptionAsync({ data: { rewardItemId: modalItem.id, quantity } }));
+      // Redemption API chaqirish
+      await dispatch(
+        postRedemptionAsync({ data: { rewardItemId: modalItem.id, quantity } })
+      );
+
       setOpen(false);
       setModalItem(null);
+
+      // Success popap
+      setSuccessMessage(
+        "Siz ushbu mahsulotni sotib oldingiz va admin ushbu so‘rovni ko‘rib chiqqandan so‘ng habar beradi!"
+      );
     }
   };
 
@@ -38,10 +48,15 @@ const ShopTab = ({ user, t }) => {
     setModalItem(null);
   };
 
+  const handleCloseSuccess = () => {
+    setSuccessMessage("");
+  };
+
   const canAfford = (item) => user?.coins >= item.cost;
 
   return (
     <div className="p-4">
+      {/* Coin Balance */}
       <div className="mb-6 p-4 bg-blue-100 border border-blue-300 rounded flex items-center space-x-2">
         <Badge type="info" />
         <span>
@@ -49,27 +64,35 @@ const ShopTab = ({ user, t }) => {
         </span>
       </div>
 
+      {/* Reward Items */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {rewardItemList.map((item) => (
           <Card key={item.id} className="flex flex-col justify-between">
             <CardContent>
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-              <p className="text-gray-700">{item.description ?? "No description available"}</p>
+              <p className="text-gray-700">
+                {item.description ?? "No description available"}
+              </p>
               <p className="mt-2 text-sm text-gray-500">Stock: {item.stock}</p>
             </CardContent>
             <div className="p-4 pt-0">
               <Button
                 disabled={!canAfford(item)}
                 onClick={() => openModal(item)}
-                className={`w-full ${!canAfford(item) ? "bg-gray-400 cursor-not-allowed" : ""}`}
+                className={`w-full ${
+                  !canAfford(item) ? "bg-gray-400 cursor-not-allowed" : ""
+                }`}
               >
-                {canAfford(item) ? `${t("Buy for")} ${item.cost} ${t("coins")}` : t("Insufficient Coins")}
+                {canAfford(item)
+                  ? `${t("Buy for")} ${item.cost} ${t("coins")}`
+                  : t("Insufficient Coins")}
               </Button>
             </div>
           </Card>
         ))}
       </div>
 
+      {/* Purchase Modal */}
       {open && (
         <div
           className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
@@ -107,7 +130,10 @@ const ShopTab = ({ user, t }) => {
                 className="w-full p-2 border border-gray-300 rounded mb-6 text-lg"
               />
               <div className="flex justify-end space-x-3">
-                <Button onClick={handleCancel} className="bg-gray-300 hover:bg-gray-400 text-gray-800">
+                <Button
+                  onClick={handleCancel}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-800"
+                >
                   {t("Cancel")}
                 </Button>
                 <Button type="primary" onClick={handleConfirm}>
@@ -115,6 +141,18 @@ const ShopTab = ({ user, t }) => {
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Popap */}
+      {successMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="bg-green-500 text-white rounded p-6 shadow-lg max-w-sm w-full text-center">
+            <p className="mb-4">{successMessage}</p>
+            <Button onClick={handleCloseSuccess} className="bg-white text-green-600 font-bold">
+              OK
+            </Button>
           </div>
         </div>
       )}
