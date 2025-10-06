@@ -36,6 +36,22 @@ export const getStudentTransactionsAsync = createAsyncThunk(
   }
 );
 
+// Get Student Transactions By Id
+export const getTransactionsByIdAsync = createAsyncThunk(
+  "transaction/getTransactionsById",
+  async ({ studentId, transactionId }, { rejectWithValue }) => {
+    try {
+      const response = await transactionApi.getTransactions(
+        studentId,
+        transactionId
+      );
+      return { studentId, transactions: response.data };
+    } catch (error) {
+      return rejectWithValue("Failed to fetch transactions for transaction Id");
+    }
+  }
+);
+
 // ===== SLICE =====
 const transactionSlice = createSlice({
   name: "transaction",
@@ -74,6 +90,31 @@ const transactionSlice = createSlice({
         state.transactionList[studentId] = transactions;
       })
       .addCase(getStudentTransactionsAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // Get Transaction By Id
+      .addCase(getTransactionsByIdAsync.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getTransactionsByIdAsync.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const { studentId, transaction } = action.payload;
+        if (!state.transactionList[studentId]) {
+          state.transactionList[studentId] = [];
+        }
+        const index = state.transactionList[studentId].findIndex(
+          (t) => t.id === transaction.id
+        );
+        if (index >= 0) {
+          state.transactionList[studentId][index] = transaction;
+        } else {
+          state.transactionList[studentId].push(transaction);
+        }
+      })
+      .addCase(getTransactionsByIdAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

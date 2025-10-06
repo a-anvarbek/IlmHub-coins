@@ -23,7 +23,6 @@ export const postRedemptionAsync = createAsyncThunk(
   }
 );
 
-
 // Get all redemptions
 export const getRedemptionAsync = createAsyncThunk(
   "redemption/getRedemption",
@@ -63,6 +62,19 @@ export const putRedemptionAsync = createAsyncThunk(
       return rejectWithValue(
         error.response?.data || "Failed to update redemption"
       );
+    }
+  }
+);
+
+// Delete Redemption
+export const deleteRedemptionAsync = createAsyncThunk(
+  "redemption/deleteRedemption",
+  async (id, { rejectWithValue }) => {
+    try {
+      await redemptionApi.deleteRedemption(id);
+      return id;
+    } catch (error) {
+      return rejectWithValue("Failed to delete redemption");
     }
   }
 );
@@ -136,6 +148,22 @@ const redemptionSlice = createSlice({
         if (index !== -1) state.redemptionList[index] = updatedRedemption;
       })
       .addCase(putRedemptionAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // Delete Redemption
+      .addCase(deleteRedemptionAsync.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(deleteRedemptionAsync.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.redemptionList = state.redemptionList.filter(
+          (redemption) => redemption.id !== action.payload
+        );
+      })
+      .addCase(deleteRedemptionAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

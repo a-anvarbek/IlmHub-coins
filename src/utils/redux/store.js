@@ -7,21 +7,21 @@ import storageSession from "redux-persist/lib/storage/session";
 // Slices
 import authSlice from "./authSlice";
 import groupSlice from "./groupSlice";
+import redemptionSlice from "./redemptionSlice";
 import rewardItemSlice from "./rewardItemSlice";
 import studentSlice from "./studentSlice";
 import transactionSlice from "./transactionSlice";
 import userSlice from "./userSlice";
-import redemptionSlice from "./redemptionSlice";
 
 // All reducers merging
 const rootReducer = combineReducers({
   auth: authSlice,
   group: groupSlice,
+  redemption: redemptionSlice,
   rewardItem: rewardItemSlice,
   student: studentSlice,
   transaction: transactionSlice,
   user: userSlice,
-  redemption: redemptionSlice,
 });
 
 // Transform

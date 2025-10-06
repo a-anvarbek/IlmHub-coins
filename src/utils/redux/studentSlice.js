@@ -36,6 +36,19 @@ export const getStudentAsync = createAsyncThunk(
   }
 );
 
+// Get Student By Name Or Surname
+export const getStudentByNameOrSurNameAsync = createAsyncThunk(
+  "students/getStudentByNameOrSurname",
+  async (nameOrSurname, { rejectWithValue }) => {
+    try {
+      const response = await studentApi.getStudentById(nameOrSurname);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue("Failed to fetch student by name or surname");
+    }
+  }
+);
+
 // Get Student By Id
 export const getStudentByIdAsync = createAsyncThunk(
   "students/getStudentById",
@@ -125,6 +138,20 @@ const studentSlice = createSlice({
         state.studentList = action.payload;
       })
       .addCase(getStudentAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // Get Student By Name Or Surname
+      .addCase(getStudentByNameOrSurNameAsync.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getStudentByNameOrSurNameAsync.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.studentDetail = action.payload;
+      })
+      .addCase(getStudentByNameOrSurNameAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
