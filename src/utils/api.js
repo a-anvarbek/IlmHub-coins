@@ -36,14 +36,9 @@ const REDEMPTION_API_PREFIX = "/api/redemptions";
 export const authApi = {
   register: (data) => axios.post(`${AUTH_API_PREFIX}/register`, data),
   login: (data) => axios.post(`${AUTH_API_PREFIX}/login`, data),
-  getConfirmation: () => axios.get(`${AUTH_API_PREFIX}/confirm-email`),
-  resendConfirmation: (data) =>
-    axios.post(`${AUTH_API_PREFIX}/resend-confirmation`, data),
+  refresh: (data) => axios.post(`${AUTH_API_PREFIX}/refresh`, data),
+  logout: (data) => axios.post(`${AUTH_API_PREFIX}/logout`, data),
   me: () => axios.get(`${AUTH_API_PREFIX}/me`),
-  forgotPassword: (data) =>
-    axios.post(`${AUTH_API_PREFIX}/forgot-password`, data),
-  resetPassword: (data) =>
-    axios.post(`${AUTH_API_PREFIX}/reset-password`, data),
 };
 
 // ===== Group API =====
@@ -53,10 +48,24 @@ export const groupApi = {
     axios.get(`${GROUP_API_PREFIX}/get-by-id/${groupId}`),
   getGroupByName: (groupName) =>
     axios.get(`${GROUP_API_PREFIX}/get-by-name/${groupName}`),
-  getMyGroups: () => axios.get(`${GROUP_API_PREFIX}/my-groups`),
   postGroup: (data) => axios.post(`${GROUP_API_PREFIX}/create`, data),
   putGroup: (groupId) =>
     axios.put(`${GROUP_API_PREFIX}/${groupId}/change-teacher`),
+  getMyGroups: () => axios.get(`${GROUP_API_PREFIX}/my-groups`),
+};
+
+// ===== Redemption API =====
+export const redemptionApi = {
+  postRedemption: (data) => axios.post(`${REDEMPTION_API_PREFIX}`, data),
+  getRedemption: () => axios.get(`${REDEMPTION_API_PREFIX}`),
+  getRedemptionByStudentId: (studentId) =>
+    axios.get(`${REDEMPTION_API_PREFIX}/students/${studentId}`),
+  putRedemption: (redemptionId, data) =>
+    axios.put(`${REDEMPTION_API_PREFIX}/${redemptionId}/status`, data, {
+      headers: { "Content-Type": "application/json" },
+    }),
+  deleteRedemption: (redemptionId) =>
+    axios.delete(`${REDEMPTION_API_PREFIX}/${redemptionId}`),
 };
 
 // ===== Reward Item API =====
@@ -71,6 +80,8 @@ export const rewardItemApi = {
 export const studentApi = {
   postStudent: (data) => axios.post(`${STUDENT_API_PREFIX}/create`, data),
   getStudent: () => axios.get(`${STUDENT_API_PREFIX}`),
+  getStudentByNameOrSurname: (nameOrSurname) =>
+    axios.get(`${STUDENT_API_PREFIX}/get-by-name/${nameOrSurname}`),
   getStudentById: (id) => axios.get(`${STUDENT_API_PREFIX}/${id}`),
   deleteStudent: (id) => axios.delete(`${STUDENT_API_PREFIX}/${id}`),
   getStudentByCode: (code) =>
@@ -85,6 +96,10 @@ export const transactionApi = {
     axios.post(`${TRANSACTION_API_PREFIX}/${studentId}/transactions`, data),
   getTransactions: (studentId) =>
     axios.get(`${TRANSACTION_API_PREFIX}/${studentId}/transactions`),
+  getTransactionsById: (studentId, transactionId) =>
+    axios.get(
+      `${TRANSACTION_API_PREFIX}/${studentId}/transactions/${transactionId}`
+    ),
 };
 
 // ===== User API =====
@@ -96,16 +111,4 @@ export const userApi = {
   getUserById: (id) => axios.get(`${USER_API_PREFIX}/get-by-id/${id}`),
   postUser: (data, id) => axios.post(`${USER_API_PREFIX}/${id}/promote`, data),
   deleteUser: (id) => axios.delete(`${USER_API_PREFIX}/${id}`),
-};
-
-// ===== Redemption API =====
-export const redemptionApi = {
-  postRedemption: (data) => axios.post(`/api/redemptions`, data),
-  getRedemption: () => axios.get(`/api/redemptions`),
-  getRedemptionByStudentId: (studentId) =>
-    axios.get(`/api/redemptions/students/${studentId}`),
-  putRedemption: (redemptionId, data) =>
-    axios.put(`/api/redemptions/${redemptionId}/status`, data, {
-      headers: { "Content-Type": "application/json" },
-    }),
 };

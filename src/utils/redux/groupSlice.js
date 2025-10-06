@@ -23,19 +23,6 @@ export const getGroupAllAsync = createAsyncThunk(
   }
 );
 
-// Get My Groups
-export const getMyGroupsAsync = createAsyncThunk(
-  "group/getMyGroups",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await groupApi.getMyGroups();
-      return response.data;
-    } catch (error) {
-      return rejectWithValue("Failed to fetch my groups");
-    }
-  }
-);
-
 // Get Group By Id
 export const getGroupByIdAsync = createAsyncThunk(
   "group/getGroupById",
@@ -99,6 +86,19 @@ export const putGroupAsync = createAsyncThunk(
   }
 );
 
+// Get My Groups
+export const getMyGroupsAsync = createAsyncThunk(
+  "group/getMyGroups",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await groupApi.getMyGroups();
+      return response.data;
+    } catch (error) {
+      return rejectWithValue("Failed to fetch my groups");
+    }
+  }
+);
+
 // ===== SLICE =====
 const groupSlice = createSlice({
   name: "group",
@@ -118,20 +118,6 @@ const groupSlice = createSlice({
         state.groupList = action.payload;
       })
       .addCase(getGroupAllAsync.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Get My Groups
-      .addCase(getMyGroupsAsync.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(getMyGroupsAsync.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.groupList = action.payload;
-      })
-      .addCase(getMyGroupsAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
@@ -200,6 +186,20 @@ const groupSlice = createSlice({
         }
       })
       .addCase(putGroupAsync.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // Get My Groups
+      .addCase(getMyGroupsAsync.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(getMyGroupsAsync.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.groupList = action.payload;
+      })
+      .addCase(getMyGroupsAsync.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
