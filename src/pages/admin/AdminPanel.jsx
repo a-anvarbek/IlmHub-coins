@@ -19,18 +19,18 @@ export default function AdminPanel() {
   const { teachers, items, students, addTeacher, addItem } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
 
-  // ✅ Users state
+  // Users state
   const [users, setUsers] = useState([
     { id: 1, name: "Admin User", email: "admin@example.com" },
   ]);
   const [userForm, setUserForm] = useState({ name: "", email: "" });
   const [showUserDialog, setShowUserDialog] = useState(false);
 
-  // ✅ Teacher form states
+  // Teacher form states
   const [teacherForm, setTeacherForm] = useState({ name: "", email: "" });
   const [showTeacherDialog, setShowTeacherDialog] = useState(false);
 
-  // ✅ Item form states
+  // Item form states
   const [itemForm, setItemForm] = useState({
     name: "",
     price: "",
@@ -38,7 +38,7 @@ export default function AdminPanel() {
   });
   const [showItemDialog, setShowItemDialog] = useState(false);
 
-  // ✅ Add user
+  // Add user
   const handleAddUser = (e) => {
     e.preventDefault();
     if (userForm.name && userForm.email) {
@@ -51,7 +51,7 @@ export default function AdminPanel() {
     }
   };
 
-  // ✅ Add teacher
+  // Add teacher
   const handleAddTeacher = (e) => {
     e.preventDefault();
     if (teacherForm.name && teacherForm.email) {
@@ -61,7 +61,7 @@ export default function AdminPanel() {
     }
   };
 
-  // ✅ Add item
+  // Add item
   const handleAddItem = (e) => {
     e.preventDefault();
     if (itemForm.name && itemForm.price) {
@@ -173,7 +173,7 @@ export default function AdminPanel() {
             <StudentsTab students={students} t={t} />
           )}
 
-          {/* ✅ Redemption tab - Redux ichida data oladi */}
+          {/* Redemption tab - Redux ichida data oladi */}
           {activeTab === "redemption" && <RedemptionTab t={t} />}
         </div>
       </div>

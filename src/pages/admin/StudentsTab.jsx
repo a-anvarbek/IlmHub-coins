@@ -40,7 +40,7 @@ export default function StudentsTab({ t }) {
             <TableHeader>
               <TableRow>
                 <TableHead>{t("common.name")}</TableHead>
-                <TableHead>Student ID</TableHead>
+                <TableHead>User name</TableHead>
                 <TableHead>{t("common.coins")}</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
@@ -50,13 +50,13 @@ export default function StudentsTab({ t }) {
                 <TableRow key={student.id}>
                   <TableCell className="font-medium">{student.firstName} {student.lastName}</TableCell>
                   <TableCell className="font-mono">
-                    {student.studentId}
+                    {student.username}
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant={student.coins > 20 ? "default" : "secondary"}
+                      variant={student.balance > 0 ? "default" : "secondary"}
                     >
-                      {student.coins} coins
+                      {student.balance} coins
                     </Badge>
                   </TableCell>
                   <TableCell>
