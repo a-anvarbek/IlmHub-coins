@@ -17,71 +17,27 @@ import { Badge } from "../../components/ui/badge";
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
 
-const values = [
-  {
-    icon: <Target className="w-8 h-8 text-blue-500" />,
-    title: "Our Mission",
-    description:
-      "To provide high-quality education and empower students with knowledge and skills for their future success.",
-  },
-  {
-    icon: <Eye className="w-8 h-8 text-green-500" />,
-    title: "Our Vision",
-    description:
-      "To become the leading educational center in Uzbekistan, fostering innovation and excellence in learning.",
-  },
-  {
-    icon: <Heart className="w-8 h-8 text-red-500" />,
-    title: "Our Values",
-    description:
-      "Excellence, integrity, innovation, and student-centered approach guide everything we do.",
-  },
-];
-
-const achievements = [
-  {
-    icon: <Users className="w-6 h-6" />,
-    title: "500+ Students Graduated",
-    description: "Successfully trained and graduated over 500 students",
-  },
-  {
-    icon: <BookOpen className="w-6 h-6" />,
-    title: "20+ Courses Available",
-    description: "Comprehensive curriculum covering various subjects",
-  },
-  {
-    icon: <Award className="w-6 h-6" />,
-    title: "95% Success Rate",
-    description: "High achievement rate in student outcomes",
-  },
-  {
-    icon: <Globe className="w-6 h-6" />,
-    title: "International Standards",
-    description: "Following global best practices in education",
-  },
-];
-
 const team = [
   {
-    name: "Dr. Aziz Karimov",
+    name: "Davron Abduhakimov",
     role: "Director",
     experience: "15 years in education",
     specialization: "Educational Leadership",
   },
   {
-    name: "Ozoda Rahimova",
+    name: "Dilnoza",
     role: "Senior English Teacher",
     experience: "10 years in language teaching",
     specialization: "IELTS & Academic English",
   },
   {
-    name: "Bobur Alimov",
+    name: "Vohid Abdohakimov",
     role: "IT Instructor",
     experience: "8 years in programming",
     specialization: "Web Development & Programming",
   },
   {
-    name: "Malika Tosheva",
+    name: "Akhror Nomanof",
     role: "Math Teacher",
     experience: "12 years in mathematics",
     specialization: "Advanced Mathematics",
@@ -90,6 +46,47 @@ const team = [
 
 export default function AboutPage() {
   const { t } = useLanguage();
+
+  const achievements = [
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: t("about.achievement1_title"),
+      description: t("about.achievement1_desc"),
+    },
+    {
+      icon: <BookOpen className="w-6 h-6" />,
+      title: t("about.achievement2_title"),
+      description: t("about.achievement2_desc"),
+    },
+    {
+      icon: <Award className="w-6 h-6" />,
+      title: t("about.achievement3_title"),
+      description: t("about.achievement3_desc"),
+    },
+    {
+      icon: <Globe className="w-6 h-6" />,
+      title: t("about.achievement4_title"),
+      description: t("about.achievement4_desc"),
+    },
+  ];
+
+  const values = [
+    {
+      icon: <Target className="w-8 h-8 text-blue-500" />,
+      title: t("about.mission_title"),
+      description: t("about.mission_desc"),
+    },
+    {
+      icon: <Eye className="w-8 h-8 text-green-500" />,
+      title: t("about.vision_title"),
+      description: t("about.vision_desc"),
+    },
+    {
+      icon: <Heart className="w-8 h-8 text-red-500" />,
+      title: t("about.values_title"),
+      description: t("about.values_desc"),
+    },
+  ];
 
   return (
     <div className="min-h-screen pt-20">
@@ -137,7 +134,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Our Achievements
+              {t("about.achievements_title")}
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {achievements.map((achievement, index) => (
@@ -168,7 +165,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Meet Our Team
+              {t("about.team_title")}
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {team.map((member, index) => (
@@ -207,28 +204,26 @@ export default function AboutPage() {
       <section className="py-20 bg-blue-600 dark:bg-blue-800 text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8">
-              Why Choose IlmHub?
-            </h2>
+        
             <div className="grid md:grid-cols-2 gap-8 text-left">
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <Lightbulb className="w-6 h-6 text-yellow-400 mt-1" />
                   <div>
                     <h3 className="font-bold mb-1">
-                      Innovative Teaching Methods
+                      {t("about.innovative_methods_title")}
                     </h3>
                     <p className="text-blue-100">
-                      Modern and interactive approaches to learning
+                      {t("about.innovative_methods_desc")}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Users className="w-6 h-6 text-yellow-400 mt-1" />
                   <div>
-                    <h3 className="font-bold mb-1">Experienced Faculty</h3>
+                    <h3 className="font-bold mb-1">{t("about.experienced_faculty_title")}</h3>
                     <p className="text-blue-100">
-                      Qualified teachers with proven track records
+                      {t("about.experienced_faculty_desc")}
                     </p>
                   </div>
                 </div>
@@ -237,18 +232,18 @@ export default function AboutPage() {
                 <div className="flex items-start gap-3">
                   <Award className="w-6 h-6 text-yellow-400 mt-1" />
                   <div>
-                    <h3 className="font-bold mb-1">Proven Results</h3>
+                    <h3 className="font-bold mb-1">{t("about.proven_results_title")}</h3>
                     <p className="text-blue-100">
-                      High success rates and student satisfaction
+                      {t("about.proven_results_desc")}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Globe className="w-6 h-6 text-yellow-400 mt-1" />
                   <div>
-                    <h3 className="font-bold mb-1">International Standards</h3>
+                    <h3 className="font-bold mb-1">{t("about.international_standards_title")}</h3>
                     <p className="text-blue-100">
-                      Curriculum aligned with global best practices
+                      {t("about.international_standards_desc")}
                     </p>
                   </div>
                 </div>

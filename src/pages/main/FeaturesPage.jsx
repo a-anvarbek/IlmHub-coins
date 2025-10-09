@@ -21,100 +21,100 @@ import { Badge } from "../../components/ui/badge";
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
 
-const adminFeatures = [
-  {
-    icon: <Users className="w-6 h-6" />,
-    title: "Teacher Management",
-    description: "Add, edit, and manage teacher accounts and permissions",
-  },
-  {
-    icon: <ShoppingCart className="w-6 h-6" />,
-    title: "Item Management",
-    description: "Create and manage shop items that students can purchase",
-  },
-  {
-    icon: <BarChart3 className="w-6 h-6" />,
-    title: "Analytics Dashboard",
-    description: "View comprehensive reports and statistics",
-  },
-  {
-    icon: <Settings className="w-6 h-6" />,
-    title: "System Configuration",
-    description: "Configure system settings and preferences",
-  },
-];
-
-const teacherFeatures = [
-  {
-    icon: <GraduationCap className="w-6 h-6" />,
-    title: "Student Management",
-    description: "Add new students and generate unique 10-digit IDs",
-  },
-  {
-    icon: <Coins className="w-6 h-6" />,
-    title: "Coin Distribution",
-    description: "Reward students with coins for achievements",
-  },
-  {
-    icon: <BookOpen className="w-6 h-6" />,
-    title: "Course Materials",
-    description: "Access and share educational resources",
-  },
-  {
-    icon: <BarChart3 className="w-6 h-6" />,
-    title: "Student Progress",
-    description: "Track and monitor student performance",
-  },
-];
-
-const studentFeatures = [
-  {
-    icon: <Coins className="w-6 h-6" />,
-    title: "Coin Wallet",
-    description: "View your coin balance and transaction history",
-  },
-  {
-    icon: <ShoppingCart className="w-6 h-6" />,
-    title: "Shop Access",
-    description: "Purchase educational materials and rewards",
-  },
-  {
-    icon: <Trophy className="w-6 h-6" />,
-    title: "Achievements",
-    description: "Track your learning milestones and accomplishments",
-  },
-  {
-    icon: <BookOpen className="w-6 h-6" />,
-    title: "Learning Resources",
-    description: "Access course materials and assignments",
-  },
-];
-
-const systemFeatures = [
-  {
-    icon: <Shield className="w-6 h-6" />,
-    title: "Secure Authentication",
-    description: "Multi-role authentication system with secure login",
-  },
-  {
-    icon: <Smartphone className="w-6 h-6" />,
-    title: "Responsive Design",
-    description: "Works perfectly on all devices - desktop, tablet, mobile",
-  },
-  {
-    icon: <Clock className="w-6 h-6" />,
-    title: "Real-time Updates",
-    description: "Instant notifications and live data synchronization",
-  },
-  {
-    icon: <UserCheck className="w-6 h-6" />,
-    title: "Role-based Access",
-    description: "Different interfaces for admin, teachers, and students",
-  },
-];
-
 export default function FeaturesPage() {
   const { t } = useLanguage();
+
+  const adminFeatures = [
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: t("features.teacher_management"),
+      description: t("features.teacher_management_desc"),
+    },
+    {
+      icon: <ShoppingCart className="w-6 h-6" />,
+      title: t("features.item_management"),
+      description: t("features.item_management_desc"),
+    },
+    {
+      icon: <BarChart3 className="w-6 h-6" />,
+      title: t("features.analytics_dashboard"),
+      description: t("features.analytics_dashboard_desc"),
+    },
+    {
+      icon: <Settings className="w-6 h-6" />,
+      title: t("features.system_config"),
+      description: t("features.system_config_desc"),
+    },
+  ];
+
+  const teacherFeatures = [
+    {
+      icon: <GraduationCap className="w-6 h-6" />,
+      title: t("features.student_management"),
+      description: t("features.student_management_desc"),
+    },
+    {
+      icon: <Coins className="w-6 h-6" />,
+      title: t("features.coin_distribution"),
+      description: t("features.coin_distribution_desc"),
+    },
+    {
+      icon: <BookOpen className="w-6 h-6" />,
+      title: t("features.course_materials"),
+      description: t("features.course_materials_desc"),
+    },
+    {
+      icon: <BarChart3 className="w-6 h-6" />,
+      title: t("features.student_progress"),
+      description: t("features.student_progress_desc"),
+    },
+  ];
+
+  const studentFeatures = [
+    {
+      icon: <Coins className="w-6 h-6" />,
+      title: t("features.coin_wallet"),
+      description: t("features.coin_wallet_desc"),
+    },
+    {
+      icon: <ShoppingCart className="w-6 h-6" />,
+      title: t("features.shop_access"),
+      description: t("features.shop_access_desc"),
+    },
+    {
+      icon: <Trophy className="w-6 h-6" />,
+      title: t("features.achievements"),
+      description: t("features.achievements_desc"),
+    },
+    {
+      icon: <BookOpen className="w-6 h-6" />,
+      title: t("features.learning_resources"),
+      description: t("features.learning_resources_desc"),
+    },
+  ];
+
+  const systemFeatures = [
+    {
+      icon: <Shield className="w-6 h-6" />,
+      title: t("features.security"),
+      description: t("features.security_desc"),
+    },
+    {
+      icon: <Smartphone className="w-6 h-6" />,
+      title: t("features.responsive"),
+      description: t("features.responsive_desc"),
+    },
+    {
+      icon: <Clock className="w-6 h-6" />,
+      title: t("features.realtime_updates"),
+      description: t("features.realtime_updates_desc"),
+    },
+    {
+      icon: <UserCheck className="w-6 h-6" />,
+      title: t("features.role_based"),
+      description: t("features.role_based_desc"),
+    },
+  ];
 
   return (
     <div className="min-h-screen pt-20">
@@ -126,18 +126,17 @@ export default function FeaturesPage() {
               {t("features.title")}
             </h1>
             <p className="text-xl text-purple-100 mb-8">
-              Discover the powerful features that make IlmHub Coin the perfect
-              educational platform
+              {t("features.subtitle")}
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Badge variant="secondary" className="text-lg px-4 py-2">
-                Multi-role System
+                {t("features.multi_role")}
               </Badge>
               <Badge variant="secondary" className="text-lg px-4 py-2">
-                Coin Economy
+                {t("features.coin_economy")}
               </Badge>
               <Badge variant="secondary" className="text-lg px-4 py-2">
-                Real-time
+                {t("features.real_time")}
               </Badge>
             </div>
           </div>
@@ -153,7 +152,7 @@ export default function FeaturesPage() {
                 {t("features.admin_panel")}
               </h2>
               <p className="text-muted-foreground text-lg">
-                Complete administrative control and management capabilities
+                {t("features.admin_panel_desc")}
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -188,7 +187,7 @@ export default function FeaturesPage() {
                 {t("features.teacher_panel")}
               </h2>
               <p className="text-muted-foreground text-lg">
-                Comprehensive tools for educators to manage and engage students
+                {t("features.teacher_panel_desc")}
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -223,7 +222,7 @@ export default function FeaturesPage() {
                 {t("features.student_panel")}
               </h2>
               <p className="text-muted-foreground text-lg">
-                Engaging features designed to motivate and reward learning
+                {t("features.student_panel_desc")}
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -258,8 +257,7 @@ export default function FeaturesPage() {
                 {t("features.coin_system")} & More
               </h2>
               <p className="text-muted-foreground text-lg">
-                Advanced system features ensuring security, reliability, and
-                great user experience
+                {t("features.more")}
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -290,32 +288,31 @@ export default function FeaturesPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to Experience These Features?
+              {t("features.cta_title")}
             </h2>
             <p className="text-xl text-blue-100 mb-8">
-              Join  today and discover how our innovative platform can
-              transform your learning experience.
+              {t("features.cta_desc")}
             </p>
             <div className="grid md:grid-cols-3 gap-6 text-center">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
                 <Shield className="w-8 h-8 mx-auto mb-3 text-yellow-400" />
-                <h3 className="font-bold mb-2">Secure & Reliable</h3>
+                <h3 className="font-bold mb-2">{t("features.secure_reliable")}</h3>
                 <p className="text-sm text-blue-100">
-                  Enterprise-grade security
+                  {t("features.security_desc")}
                 </p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
                 <Users className="w-8 h-8 mx-auto mb-3 text-yellow-400" />
-                <h3 className="font-bold mb-2">Multi-role Support</h3>
+                <h3 className="font-bold mb-2">{t("features.multi_role_support")}</h3>
                 <p className="text-sm text-blue-100">
-                  Admin, Teacher, Student panels
+                  {t("features.multi_role_support")}
                 </p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
                 <Coins className="w-8 h-8 mx-auto mb-3 text-yellow-400" />
-                <h3 className="font-bold mb-2">Reward System</h3>
+                <h3 className="font-bold mb-2">{t("features.reward_system")}</h3>
                 <p className="text-sm text-blue-100">
-                  Motivational coin economy
+                  {t("features.coin_economy")}
                 </p>
               </div>
             </div>
