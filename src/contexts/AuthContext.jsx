@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
   };
 
   // Login function
-  const login = async (fcredentials) => {
+  const login = async (credentials) => {
     // Admin
     if (
       credentials.email === "admin@ilmhub.uz" &&
@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
         id: "admin",
         name: "Admin",
         email: "admin@ilmhub.uz",
-        role: "admin"
+        role: "admin",
       });
       return true;
     }
@@ -190,21 +190,10 @@ export function AuthProvider({ children }) {
     return true;
   };
 
-  const updateUser = (newUser) => {
-    let mappedUser = { ...newUser };
-    if (typeof newUser.role === 'number') {
-      if (newUser.role === 0) mappedUser.role = 'admin';
-      else if (newUser.role === 1) mappedUser.role = 'teacher';
-      else if (newUser.role === 2) mappedUser.role = 'student';
-    }
-    setUser(mappedUser);
-  };
-
   return (
     <AuthContext.Provider
       value={{
         user,
-        updateUser,
         login,
         logout,
         signup,
@@ -231,4 +220,3 @@ export function useAuth() {
   }
   return context;
 }
-  
