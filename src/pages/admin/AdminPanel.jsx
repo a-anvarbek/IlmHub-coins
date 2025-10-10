@@ -1,4 +1,4 @@
-// Libraries
+  // Libraries
 import { useState } from "react";
 import { Users, Package, BarChart3, Shield } from "lucide-react";
 
@@ -79,102 +79,110 @@ export default function AdminPanel() {
     {
       id: "overview",
       label: "Overview",
-      icon: <BarChart3 className="w-4 h-4" />,
+      icon: <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5" />,
     },
-    { id: "users", label: "Users", icon: <Users className="w-4 h-4" /> },
-    { id: "teachers", label: "Teachers", icon: <Users className="w-4 h-4" /> },
-    { id: "items", label: "Items", icon: <Package className="w-4 h-4" /> },
-    { id: "students", label: "Students", icon: <Shield className="w-4 h-4" /> },
-    {
-      id: "redemption",
-      label: "Redemption",
-      icon: <Shield className="w-4 h-4" />,
-    },
+    { id: "users", label: "Users", icon: <Users className="w-4 h-4 sm:w-5 sm:h-5" /> },
+    { id: "teachers", label: "Teachers", icon: <Users className="w-4 h-4 sm:w-5 sm:h-5" /> },
+    { id: "items", label: "Items", icon: <Package className="w-4 h-4 sm:w-5 sm:h-5" /> },
+    { id: "students", label: "Students", icon: <Shield className="w-4 h-4 sm:w-5 sm:h-5" /> },
+    { id: "redemption", label: "Redemption", icon: <Shield className="w-4 h-4 sm:w-5 sm:h-5" /> },
   ];
 
   return (
     <div className="min-h-screen pt-20 bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{t("admin.title")}</h1>
-            <p className="text-muted-foreground">
+          <div className="mb-6 sm:mb-8 text-center sm:text-left">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">
+              {t("admin.title")}
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               Manage your educational platform and monitor system performance
             </p>
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex gap-2 mb-8 bg-muted p-1 rounded-lg w-fit">
+          <div
+            className="
+              flex flex-col sm:flex-row sm:gap-1 mb-6 sm:mb-8
+              bg-muted p-1 rounded-lg
+              w-full
+            "
+          >
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors ${
-                  activeTab === tab.id
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`
+                  flex-1 flex items-left justify-left sm:justify-start gap-1 sm:gap-2
+                  px-2 py-1 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm
+                  transition-colors
+                  ${
+                    activeTab === tab.id
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }
+                `}
               >
                 {tab.icon}
-                {tab.label}
+                <span>{tab.label}</span>
               </button>
             ))}
           </div>
 
           {/* Tabs Content */}
-          {activeTab === "overview" && (
-            <OverviewTab
-              students={students}
-              teachers={teachers}
-              items={items}
-              totalCoins={totalCoins}
-              averageCoins={averageCoins}
-            />
-          )}
+          <div className="w-full">
+            {activeTab === "overview" && (
+              <OverviewTab
+                students={students}
+                teachers={teachers}
+                items={items}
+                totalCoins={totalCoins}
+                averageCoins={averageCoins}
+              />
+            )}
 
-          {activeTab === "users" && (
-            <UsersTab
-              users={users}
-              t={t}
-              showUserDialog={showUserDialog}
-              setShowUserDialog={setShowUserDialog}
-              userForm={userForm}
-              setUserForm={setUserForm}
-              handleAddUser={handleAddUser}
-            />
-          )}
+            {activeTab === "users" && (
+              <UsersTab
+                users={users}
+                t={t}
+                showUserDialog={showUserDialog}
+                setShowUserDialog={setShowUserDialog}
+                userForm={userForm}
+                setUserForm={setUserForm}
+                handleAddUser={handleAddUser}
+              />
+            )}
 
-          {activeTab === "teachers" && (
-            <TeachersTab
-              teachers={teachers}
-              t={t}
-              showTeacherDialog={showTeacherDialog}
-              setShowTeacherDialog={setShowTeacherDialog}
-              teacherForm={teacherForm}
-              setTeacherForm={setTeacherForm}
-              handleAddTeacher={handleAddTeacher}
-            />
-          )}
+            {activeTab === "teachers" && (
+              <TeachersTab
+                teachers={teachers}
+                t={t}
+                showTeacherDialog={showTeacherDialog}
+                setShowTeacherDialog={setShowTeacherDialog}
+                teacherForm={teacherForm}
+                setTeacherForm={setTeacherForm}
+                handleAddTeacher={handleAddTeacher}
+              />
+            )}
 
-          {activeTab === "items" && (
-            <ItemsTab
-              items={items}
-              t={t}
-              showItemDialog={showItemDialog}
-              setShowItemDialog={setShowItemDialog}
-              itemForm={itemForm}
-              setItemForm={setItemForm}
-              handleAddItem={handleAddItem}
-            />
-          )}
+            {activeTab === "items" && (
+              <ItemsTab
+                items={items}
+                t={t}
+                showItemDialog={showItemDialog}
+                setShowItemDialog={setShowItemDialog}
+                itemForm={itemForm}
+                setItemForm={setItemForm}
+                handleAddItem={handleAddItem}
+              />
+            )}
 
-          {activeTab === "students" && (
-            <StudentsTab students={students} t={t} />
-          )}
+            {activeTab === "students" && <StudentsTab students={students} t={t} />}
 
-          {/* Redemption tab - Redux ichida data oladi */}
-          {activeTab === "redemption" && <RedemptionTab t={t} />}
+            {activeTab === "redemption" && <RedemptionTab t={t} />}
+          </div>
         </div>
       </div>
     </div>

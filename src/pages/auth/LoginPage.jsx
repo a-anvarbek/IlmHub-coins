@@ -122,6 +122,7 @@ export default function LoginPage() {
                   </TabsTrigger>
                 </TabsList>
 
+
                 <form onSubmit={handleSubmit} className="space-y-4 mt-6">
                   {loginType === "student" ? (
                     <div>

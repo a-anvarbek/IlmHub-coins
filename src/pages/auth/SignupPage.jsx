@@ -29,12 +29,14 @@ import { registerAsync, selectAuth } from "../../utils/redux/authSlice";
 
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function SignupPage() {
   const { t } = useLanguage();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { status, error } = useSelector(selectAuth);
+  const { updateUser } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -71,8 +73,8 @@ export default function SignupPage() {
     const resultAction = await dispatch(registerAsync(payload));
 
     if (registerAsync.fulfilled.match(resultAction)) {
-      setSuccess("✅ Account created successfully!");
-      setTimeout(() => navigate("/student"), 1500);
+      setSuccess("✅ Account created successfully! Please login.");
+      setTimeout(() => navigate("/login"), 1500);
     } else {
       console.error("❌ Registration failed:", resultAction.payload);
     }
