@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
   };
 
   // Login function
-  const login = async (credentials) => {
+  const login = async (fcredentials) => {
     // Admin
     if (
       credentials.email === "admin@ilmhub.uz" &&
@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
         id: "admin",
         name: "Admin",
         email: "admin@ilmhub.uz",
-        role: "admin",
+        role: "admin"
       });
       return true;
     }
