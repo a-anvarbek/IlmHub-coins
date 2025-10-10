@@ -32,10 +32,13 @@ import { loginAsync, selectAuth } from "../../utils/redux/authSlice";
 // Routes
 import ROUTES from "../../router/routes";
 
+// Contexts
+import { useAuth } from "../../contexts/AuthContext";
+
 export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { token, role, status, isAuthenticated } = useSelector(selectAuth);
+  const { updateUser } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [loginType, setLoginType] = useState("student");
@@ -77,7 +80,20 @@ export default function LoginPage() {
       const resultAction = await dispatch(loginAsync(credentials));
       const result = resultAction.payload;
 
-      if (!result) {
+      if (result) {
+        updateUser(result);
+        const backendRole = result.role;
+
+        if (backendRole === 0) navigate(ROUTES.ADMIN);
+        else if (backendRole === 1) navigate(ROUTES.TEACHER);
+        else if (backendRole === 2) navigate(ROUTES.STUDENT);
+        else {
+          // fallback
+          if (loginType === "student") navigate(ROUTES.STUDENT);
+          else if (loginType === "teacher") navigate(ROUTES.TEACHER);
+          else navigate(ROUTES.ADMIN);
+        }
+      } else {
         setError("Incorrect credentials");
       }
     } catch (err) {
