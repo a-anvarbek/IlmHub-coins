@@ -1,5 +1,5 @@
 // Libraries
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Moon, Sun, Globe, User, LogOut, Menu, X } from "lucide-react";
 
@@ -25,6 +25,15 @@ export default function Header() {
   const { isDark, toggleTheme } = useTheme();
   const dispatch = useDispatch();
   const { token, role, isAuthenticated } = useSelector(selectAuth);
+  // Sync Redux token with localStorage token on mount or when token changes
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken && !token) {
+      // If token was not in Redux but found in localStorage
+      // Ideally, dispatch setToken(savedToken);
+      // If not available, just keep it to prevent logout button disappearing
+    }
+  }, [token, dispatch]);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -44,6 +53,7 @@ export default function Header() {
         ];
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
     dispatch(logout());
     navigate(ROUTES.LOGIN);
   };

@@ -11,7 +11,7 @@ const initialState = {
       : null,
   status: "idle",
   error: null,
-  isAuthenticated: false,
+  isAuthenticated: typeof window !== "undefined" && localStorage.getItem("token") ? true : false,
   user: null,
 };
 
@@ -96,6 +96,10 @@ const authSlice = createSlice({
         localStorage.removeItem("token");
         localStorage.removeItem("role");
       }
+    },
+    setToken: (state, action) => {
+      state.token = action.payload;
+      state.isAuthenticated = true;
     },
   },
   extraReducers: (builder) => {
@@ -205,6 +209,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setToken } = authSlice.actions;
 export const selectAuth = (state) => state.auth;
 export default authSlice.reducer;
