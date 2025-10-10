@@ -8,26 +8,26 @@ import { Card, CardContent } from "../../components/ui/card";
 // Contexts
 import { useLanguage } from "../../contexts/LanguageContext";
 
-const features = [
-  {
-    icon: <Users className="w-8 h-8 text-blue-500" />,
-    title: "Expert Teachers",
-    description: "Qualified and experienced instructors",
-  },
-  {
-    icon: <BookOpen className="w-8 h-8 text-green-500" />,
-    title: "Modern Curriculum",
-    description: "Up-to-date courses and materials",
-  },
-  {
-    icon: <Award className="w-8 h-8 text-purple-500" />,
-    title: "Coin System",
-    description: "Reward-based learning approach",
-  },
-];
-
 export default function HomePage({ onNavigate }) {
   const { t } = useLanguage();
+
+  const features = [
+    {
+      icon: <Users className="w-8 h-8 text-blue-500" />,
+      title: t("home.feature1_title"),
+      description: t("home.feature1_desc"),
+    },
+    {
+      icon: <BookOpen className="w-8 h-8 text-green-500" />,
+      title: t("home.feature2_title"),
+      description: t("home.feature2_desc"),
+    },
+    {
+      icon: <Award className="w-8 h-8 text-purple-500" />,
+      title: t("home.feature3_title"),
+      description: t("home.feature3_desc"),
+    },
+  ];
 
   return (
     <div className="min-h-screen pt-20">
@@ -76,7 +76,7 @@ export default function HomePage({ onNavigate }) {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Why Choose IlmHub?
+              {t("home.why_choose")}
             </h2>
 
             <div className="grid md:grid-cols-3 gap-8">
@@ -110,25 +110,25 @@ export default function HomePage({ onNavigate }) {
                 <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
                   500+
                 </div>
-                <div className="text-muted-foreground">Students</div>
+                <div className="text-muted-foreground">{t("home.stats_students")}</div>
               </div>
               <div>
                 <div className="text-3xl md:text-4xl font-bold text-green-600 mb-2">
                   50+
                 </div>
-                <div className="text-muted-foreground">Teachers</div>
+                <div className="text-muted-foreground">{t("home.stats_teachers")}</div>
               </div>
               <div>
                 <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">
                   10+
                 </div>
-                <div className="text-muted-foreground">Courses</div>
+                <div className="text-muted-foreground">{t("home.stats_courses")}</div>
               </div>
               <div>
                 <div className="text-3xl md:text-4xl font-bold text-yellow-600 mb-2">
                   95%
                 </div>
-                <div className="text-muted-foreground">Success Rate</div>
+                <div className="text-muted-foreground">{t("home.stats_success")}</div>
               </div>
             </div>
           </div>
@@ -139,10 +139,10 @@ export default function HomePage({ onNavigate }) {
       <section className="py-20 bg-blue-600 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Start Your Learning Journey?
+            {t("home.cta_title")}
           </h2>
           <p className="text-xl mb-8 text-blue-100">
-            Join thousands of students who are already learning with us.
+            {t("home.cta_subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
@@ -158,7 +158,7 @@ export default function HomePage({ onNavigate }) {
               className="border-white text-white hover:bg-white hover:text-blue-600"
               onClick={() => onNavigate("about")}
             >
-              Learn More
+              {t("home.learn_more")}
             </Button>
           </div>
         </div>

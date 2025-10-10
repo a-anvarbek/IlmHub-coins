@@ -56,26 +56,26 @@ export default function ContactPage() {
     {
       icon: <MapPin className="w-6 h-6" />,
       title: t("contact.address"),
-      content: "Tashkent, Yunusabad district, Abdulla Qahhor street 1A",
-      details: "Metro station: Yunusabad, 5 minutes walk",
+      content: t("contact.address_full"),
+      details: t("contact.metro"),
     },
     {
       icon: <Phone className="w-6 h-6" />,
       title: t("contact.phone"),
       content: "+998 94 671 50 60",
-      details: "Available 24/7 for student support",
+      details: t("contact.phone_availability"),
     },
     {
       icon: <Mail className="w-6 h-6" />,
       title: t("contact.email"),
       content: "info@ilmhub.uz",
-      details: "We respond within 24 hours",
+      details: t("contact.email_response"),
     },
     {
       icon: <Clock className="w-6 h-6" />,
-      title: "Working Hours",
-      content: "Mon - Sat: 8:00 AM - 8:00 PM",
-      details: "Sunday: 9:00 AM - 6:00 PM",
+      title: t("contact.working_hours"),
+      content: t("contact.working_days"),
+      details: t("contact.working_sunday"),
     },
   ];
 
@@ -89,19 +89,18 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen pt-20">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-800 dark:to-blue-800 text-white">
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-800 dark:to-blue-800 text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
               {t("contact.title")}
             </h1>
-            <p className="text-xl text-green-100 mb-8">
-              Get in touch with us. We're here to help you on your educational
-              journey.
+            <p className="text-base sm:text-lg md:text-xl text-green-100 mb-6 sm:mb-8">
+              {t("contact.subtitle")}
             </p>
             <div className="flex items-center justify-center gap-2 text-yellow-300">
               <MessageSquare className="w-5 h-5" />
-              <span>Available in Uzbek and English</span>
+              <span>{t("contact.available_languages")}</span>
             </div>
           </div>
         </div>
@@ -113,14 +112,14 @@ export default function ContactPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Contact Information
+                {t("contact.info_title")}
               </h2>
               <p className="text-muted-foreground text-lg">
-                Multiple ways to reach us and get the information you need
+                {t("contact.info_desc")}
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 sm:mb-16">
               {contactInfo.map((info, index) => (
                 <Card
                   key={index}
@@ -143,13 +142,13 @@ export default function ContactPage() {
             </div>
 
             {/* Contact Form and Map */}
-            <div className="grid lg:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
               {/* Contact Form */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Send className="w-5 h-5" />
-                    Send us a Message
+                    {t("contact.form_title")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -160,7 +159,7 @@ export default function ContactPage() {
                           htmlFor="name"
                           className="block text-sm font-medium mb-1"
                         >
-                          Name *
+                          {t("contact.form_name")}
                         </label>
                         <Input
                           id="name"
@@ -176,7 +175,7 @@ export default function ContactPage() {
                           htmlFor="phone"
                           className="block text-sm font-medium mb-1"
                         >
-                          Phone
+                          {t("contact.form_phone")}
                         </label>
                         <Input
                           id="phone"
@@ -193,7 +192,7 @@ export default function ContactPage() {
                         htmlFor="email"
                         className="block text-sm font-medium mb-1"
                       >
-                        Email *
+                        {t("contact.form_email")}
                       </label>
                       <Input
                         id="email"
@@ -211,7 +210,7 @@ export default function ContactPage() {
                         htmlFor="subject"
                         className="block text-sm font-medium mb-1"
                       >
-                        Subject
+                        {t("contact.form_subject")}
                       </label>
                       <Input
                         id="subject"
@@ -227,7 +226,7 @@ export default function ContactPage() {
                         htmlFor="message"
                         className="block text-sm font-medium mb-1"
                       >
-                        Message *
+                        {t("contact.form_message")}
                       </label>
                       <Textarea
                         id="message"
@@ -242,7 +241,7 @@ export default function ContactPage() {
 
                     <Button type="submit" className="w-full">
                       <Send className="w-4 h-4 mr-2" />
-                      Send Message
+                      {t("contact.form_send")}
                     </Button>
                   </form>
                 </CardContent>
@@ -252,34 +251,31 @@ export default function ContactPage() {
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Visit Our Center</CardTitle>
+                    <CardTitle>{t("contact.visit_title")}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="bg-muted rounded-lg h-64 flex items-center justify-center mb-4">
+                    <div className="bg-muted rounded-lg h-48 sm:h-56 md:h-64 flex items-center justify-center mb-4">
                       <div className="text-center text-muted-foreground">
                         <MapPin className="w-12 h-12 mx-auto mb-2" />
-                        <p>Interactive Map</p>
+                        <p>{t("contact.interactive_map")}</p>
                         <p className="text-sm">Yunusabad district, Tashkent</p>
                       </div>
                     </div>
                     <p className="text-muted-foreground text-sm">
-                      Located in the heart of Yunusabad district, our modern
-                      facility is easily accessible by public transport and has
-                      parking available.
+                      {t("contact.visit_desc")}
                     </p>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Follow Us</CardTitle>
+                    <CardTitle>{t("contact.follow_us")}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground mb-4">
-                      Stay connected with us on social media for updates, tips,
-                      and educational content.
+                      {t("contact.follow_us_desc")}
                     </p>
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-2 sm:gap-3">
                       {socialMedia.map((social, index) => (
                         <Button key={index} variant="outline" size="sm" asChild>
                           <a
@@ -304,18 +300,16 @@ export default function ContactPage() {
       <section className="py-20 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Frequently Asked Questions
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12">
+              {t("contact.faq_title")}
             </h2>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <Card>
                 <CardContent className="pt-6">
-                  <h3 className="font-bold mb-2">What courses do you offer?</h3>
+                  <h3 className="font-bold mb-2">{t("contact.faq_q1")}</h3>
                   <p className="text-muted-foreground">
-                    We offer courses in English, IT, Mathematics, and other
-                    modern subjects. Our curriculum is designed to meet
-                    international standards.
+                    {t("contact.faq_a1")}
                   </p>
                 </CardContent>
               </Card>
@@ -323,12 +317,10 @@ export default function ContactPage() {
               <Card>
                 <CardContent className="pt-6">
                   <h3 className="font-bold mb-2">
-                    How does the coin system work?
+                    {t("contact.faq_q2")}
                   </h3>
                   <p className="text-muted-foreground">
-                    Students earn coins for achievements and good performance.
-                    These coins can be used to purchase educational materials
-                    and rewards from our shop.
+                    {t("contact.faq_a2")}
                   </p>
                 </CardContent>
               </Card>
@@ -336,12 +328,10 @@ export default function ContactPage() {
               <Card>
                 <CardContent className="pt-6">
                   <h3 className="font-bold mb-2">
-                    What are the admission requirements?
+                    {t("contact.faq_q3")}
                   </h3>
                   <p className="text-muted-foreground">
-                    We welcome students of all levels. Contact us for a
-                    consultation to determine the best course placement for your
-                    educational goals.
+                    {t("contact.faq_a3")}
                   </p>
                 </CardContent>
               </Card>
