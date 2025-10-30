@@ -40,10 +40,10 @@ export default function Header() {
   const roleRoutes = { 0: ROUTES.ADMIN, 1: ROUTES.TEACHER, 2: ROUTES.STUDENT };
 
   const navItems = [
-    { key: ROUTES.ABOUT, label: t("nav.about") },
-    { key: ROUTES.FEATURES, label: t("nav.features") },
-    { key: ROUTES.SHOP, label: t("shop") },
-    { key: ROUTES.CONTACT, label: t("nav.contact") },
+    { key: ROUTES.ABOUT, label: "Haqida" },
+    { key: ROUTES.FEATURES, label: "Xususiyatlar" },
+    { key: ROUTES.SHOP, label: "Do‘kon" },
+    { key: ROUTES.CONTACT, label: "Aloqa" },
   ];
 
   const handleLogout = () => {
@@ -87,15 +87,7 @@ export default function Header() {
           {/* Right side controls */}
           <div className="flex items-center gap-4">
             {/* Language Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLanguage(language === "en" ? "uz" : "en")}
-              className="hidden sm:flex"
-            >
-              <Globe className="w-4 h-4 mr-1" />
-              {language.toUpperCase()}
-            </Button>
+          
 
             {/* Theme Toggle */}
             <div className="flex items-center gap-2">
@@ -114,7 +106,7 @@ export default function Header() {
                   className="hidden sm:flex"
                 >
                   <User className="w-4 h-4 mr-1" />
-                  Profile
+                  Profil
                 </Button>
                 <Button variant="ghost" size="sm" onClick={handleLogout}>
                   <LogOut className="w-4 h-4" />
@@ -127,10 +119,10 @@ export default function Header() {
                   size="sm"
                   onClick={() => navigate(ROUTES.LOGIN)}
                 >
-                  {t("nav.login")}
+                  Kirish
                 </Button>
                 <Button size="sm" onClick={() => navigate(ROUTES.SIGN_UP)}>
-                  {t("nav.signup")}
+                  Ro‘yxatdan o‘tish
                 </Button>
               </div>
             )}
@@ -191,7 +183,7 @@ export default function Header() {
                       className="justify-start"
                     >
                       <User className="w-4 h-4 mr-2" />
-                      Profile
+                      Profil
                     </Button>
                     <Button
                       variant="ghost"
@@ -203,7 +195,7 @@ export default function Header() {
                       className="justify-start"
                     >
                       <LogOut className="w-4 h-4 mr-2" />
-                      {t("nav.logout")}
+                      Chiqish
                     </Button>
                   </>
                 ) : (
@@ -217,7 +209,7 @@ export default function Header() {
                       }}
                       className="justify-start"
                     >
-                      {t("nav.login")}
+                      Kirish
                     </Button>
                     <Button
                       size="sm"
@@ -227,7 +219,7 @@ export default function Header() {
                       }}
                       className="justify-start"
                     >
-                      {t("nav.signup")}
+                      Ro‘yxatdan o‘tish
                     </Button>
                   </>
                 )}
