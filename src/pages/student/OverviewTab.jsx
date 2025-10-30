@@ -17,9 +17,9 @@ export default function OverviewTab({ user = {}, achievements = [], items = [] }
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">First Name</p>
+              <p className="text-sm text-muted-foreground">Ism</p>
               <p className="text-2xl font-bold">{firstName}</p>
-              <p className="text-sm text-muted-foreground mt-2">Last Name</p>
+              <p className="text-sm text-muted-foreground mt-2">Familiya</p>
               <p className="text-2xl font-bold">{lastName}</p>
             </div>
           </div>
@@ -32,7 +32,7 @@ export default function OverviewTab({ user = {}, achievements = [], items = [] }
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Coins</p>
+                <p className="text-sm text-muted-foreground">Umumiy tangalar</p>
                 <p className="text-2xl font-bold">{totalCoins}</p>
               </div>
               <Coins className="w-8 h-8 text-yellow-500" />
@@ -44,7 +44,7 @@ export default function OverviewTab({ user = {}, achievements = [], items = [] }
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Achievements</p>
+                <p className="text-sm text-muted-foreground">Yutuqlar</p>
                 <p className="text-2xl font-bold">{totalAchievements}</p>
               </div>
               <Trophy className="w-8 h-8 text-purple-500" />
@@ -56,7 +56,7 @@ export default function OverviewTab({ user = {}, achievements = [], items = [] }
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Groups</p>
+                <p className="text-sm text-muted-foreground">Guruhlar</p>
                 <p className="text-2xl font-bold">{totalGroups}</p>
               </div>
               <ShoppingCart className="w-8 h-8 text-blue-500" />
